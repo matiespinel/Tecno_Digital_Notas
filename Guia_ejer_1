@@ -1,0 +1,39 @@
+https://campusvirtual.utdt.edu/pluginfile.php/462275/mod_resource/content/1/guia1-v1.pdf
+Simbolos = / division, // division sin resto, % resto de una division. 
+abs hace todo positivo 
+
+Ejercicio 1) Ejercicio 1. Evaluación de expresiones.
+(a) Para cada una de las siguientes expresiones, determinar cuál es su tipo y evaluarla a mano a mano,
+realizando las conversiones de tipos que sean necesarias:
+(I) 11 + 2 entero
+(II) 11 / 2 float
+(III) 11 // 2 entero
+(IV) 11 % 2 entero 1
+(V) 1 / 0 error
+(VI) 1 % 0 Error
+(VII) 11.0 + 2.0 float 
+(VIII) 'ho' + 'la' hola palabras concatenadas
+(IX) 'ja' * 3 ja repetido 3 veces
+(X) len('hola') + 6 10(funcion len devuelve numero de longitud de palabra)
+(XI) 123 + '123' error, int + string no se puede 
+(XII) 123 + 123.0 se suman y queda flotante
+(XIII) 123 + int('123') se suman 
+(XIV) str(123) + '123' se concatenan por palabra
+(b) Revisar las respuestas del punto anterior, esta vez evaluando las expresiones en una consola
+ipython y averiguando su tipo con la operación type().
+(c) ¿Qué diferencia hay entre los valores y los tipos de las expresiones (I) y (VII)?
+(d) Comparar el resultado de evaluar las expresiones (II) y (III). ¿Cuál símbolo corresponde a
+la división entera, y cuál a la división de float? ¿Qué rol tiene el símbolo % respecto de la
+división entera?
+(e) ¿A qué se deben los errores de las expresiones (V), (VI) y (XI)?
+(f) ¿Qué ocurrió exactamente al evaluar las expresiones (XII), (XIII) y (XIV)?
+
+
+Ejercicio 2. Representación de números reales en punto flotante.
+(a) Evaluar las siguientes expresiones, primero a mano y después en una consola ipython:
+(I) (10 / 3 - 3) * 3 - 1 , a mano da 0 pero en la consola 
+(II) 0.00000001 + 1000000000 - 1000000000
+(b) ¿Los resultados son los esperados? ¿A qué se debe esto?
+(c) En (II), reemplazar el primer valor literal (0.00000001) por valores cada vez más grandes
+(ej.: (0.0000001, 0.000001, ..., hasta 0.1), reevaluar y estudiar los resultados.
+
