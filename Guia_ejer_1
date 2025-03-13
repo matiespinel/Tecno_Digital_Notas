@@ -1,7 +1,9 @@
 https://campusvirtual.utdt.edu/pluginfile.php/462275/mod_resource/content/1/guia1-v1.pdf
 Simbolos = / division, // division sin resto, % resto de una division. 
 abs hace todo positivo 
-
+un programa es una secuencia finita de instrucciones.
+Ciclo de desarrollo de un programa: especificacion, como,→ Algoritmo → Programa → Verificación
+En un programa la variable es un valor que denota una posicion de la memoria en la cual se almacena un valor.    
 Ejercicio 1) Ejercicio 1. Evaluación de expresiones.
 (a) Para cada una de las siguientes expresiones, determinar cuál es su tipo y evaluarla a mano a mano,
 realizando las conversiones de tipos que sean necesarias:
