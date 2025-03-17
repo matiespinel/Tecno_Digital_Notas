@@ -1,1 +1,18 @@
 #1
+#a, la parte a no tiene returns
+#b, tiene return, la funcion hace 
+#c, fun 1 suma 1, la otra le suma 1 tmb pero llama primero a la otra por ende suma 2
+#d, fuca bien, tma un numero lo multip por 2 y le suma el otro q metas.
+def f2c (f : float) -> float:
+    res : float   = (f - 32) * 5 / 9
+    print (res)
+    return res
+
+f2c (70)
+def factorial (n : int) -> int:
+    copia = n
+    while copia > 1:
+        n = n * (copia -1)
+        copia = copia -1
+    return n    
+print (factorial (5))
