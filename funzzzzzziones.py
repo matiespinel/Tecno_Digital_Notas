@@ -1,11 +1,6 @@
-import math 
-print(math.log(math.e))
-print(1/3)
-print(len('3333333333333333'))
-x:float = 47564273 #esto es un type hint, le da al lector del codigo una pista de que tipo es sin tener qe determinarla. 
-print(x)
-print(type(x))
-
+#una funcion es un programa dentro de otro, que nos permite abtraer funcionalidades. 
+def pas ():
+    pass 
 mi: float = 50.0
 def km (mi) -> float:
     if mi < 0:
