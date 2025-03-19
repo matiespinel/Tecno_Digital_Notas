@@ -16,3 +16,27 @@ def factorial (n : int) -> int:
         copia = copia -1
     return n    
 print (factorial (5))
+def inverso(x: float) -> float:
+  ''' Requiere: x!=0
+      Devuelve: el resultado de dividir 1 por x. 
+  '''
+  return 1/x
+#si quers el inverso tenes que dividir x por -1 aca se divido por x y el devuelv ees incorrecto.
+
+def cuadrado(n: int) -> int:
+  '''Requiere: Nada.
+      Devuelve: el resutlado de elevar n al cuadrado.
+  '''
+  return n**n
+#la funcion requiere un n ahi hay un error y aparte se escribe con un solo * si se quere levar al cuadrado, hacer ** eleva n a n veces, si se quere mantener el ** cambiar el n por un 2
+n:int = 3
+print("El cuadrado de", n, "es", cuardado(n))
+
+n:int = "hola"
+print("El cuadrado de", n, "es", cuadrado(n)) #necesito un int, el string hola no lo es
+x:float = 2.0
+print("El inverso de", x, "es", inverso(x))) #parentesis de mas 
+
+x:float = O.0
+print("El inverso de", x, "es", inverso(X)) #no poder poner un 0 
+

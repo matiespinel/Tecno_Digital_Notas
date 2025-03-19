@@ -10,5 +10,5 @@ def km (mi) -> float:
         km : float = mi * 1.60934
         mensaje : str = str(int(mi)) + " millas son " + str(int(km)) + " kilometros"
         print (mensaje)
-        return
+        return 
 km (mi)

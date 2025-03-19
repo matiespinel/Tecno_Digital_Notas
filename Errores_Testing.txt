@@ -1,0 +1,7 @@
+exiten herraminetas cpaces de verificar automaticamente pequenias partes del codigo. 
+Testing:
+Revision por pares: Seprogram en equipos de 2 a 3 prsonas (Muchos ojos ven mas que 2)(dea)
+Hay 3 tipos de errores:
+- Sintacticos
+- Logicos (bucles incorrectos)
+- Semanticos (no da lo que espero)
