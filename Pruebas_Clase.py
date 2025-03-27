@@ -1,3 +1,4 @@
+
 import math 
 print(math.log(math.e))
 print(1/3)
@@ -17,3 +18,18 @@ def km (mi) -> float:
         print (mensaje)
         return
 km (mi)
+def f (x, y):
+    x = 10
+    return x + y
+b = 8
+r = f(b, b)
+print(r)
+r = f(x, b) #va a dar error pq no esta definida
+print(r)
+
+def dist (a: float,a2 : float,b : float,b2 : float ) -> float:
+    distaciaX = a2 - a  #requiere nada, devuelve la dsitancia en un float
+    distaciaY = b2 - b
+    return math.sqrt(distaciaX**2 + distaciaY**2)
+def cicular(a : str, b: str):
+    return a in (b + b) #requiere que len(a) = len(b)

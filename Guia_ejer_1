@@ -37,5 +37,16 @@ Ejercicio 2. Representación de números reales en punto flotante.
 (II) 0.00000001 + 1000000000 - 1000000000
 (b) ¿Los resultados son los esperados? ¿A qué se debe esto?
 (c) En (II), reemplazar el primer valor literal (0.00000001) por valores cada vez más grandes
-(ej.: (0.0000001, 0.000001, ..., hasta 0.1), reevaluar y estudiar los resultados.
+ej.: (0.0000001, 0.000001, ..., hasta 0.1), reevaluar y estudiar los resultados.
 
+Clse practica: 21/03
+// 1 va a printear 2 a la quinta, 32.
+//  2 Tini Tini Tini
+va hacer print de 18. 
+
+def es par
+    requiere nada
+    Devuelve true or false en base si es par o no.
+def busqueda de par:
+    nada  
+    devuelve true or false dependiendo si es par. 

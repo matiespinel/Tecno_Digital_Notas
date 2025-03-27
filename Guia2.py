@@ -35,8 +35,8 @@ print("El cuadrado de", n, "es", cuardado(n))
 n:int = "hola"
 print("El cuadrado de", n, "es", cuadrado(n)) #necesito un int, el string hola no lo es
 x:float = 2.0
-print("El inverso de", x, "es", inverso(x))) #parentesis de mas 
+print("El inverso de", x, "es", inverso(x)) #parentesis de mas 
 
-x:float = O.0
+x:float = 0,0 #eso era una o 
 print("El inverso de", x, "es", inverso(X)) #no poder poner un 0 
 

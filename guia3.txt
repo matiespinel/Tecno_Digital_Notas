@@ -1,0 +1,4 @@
+1) i) bool ii) bool iii) true, bool iv) true, bool v) true, pq 1 es mayor a 0 y el not te da true tmb vi) false, el and te la caga vii) true, el or te deja que uno solo sea viii)true 
+2)  a) en el a para que imprima a p y q tiene que ser verdadera y para que sea b solo p tiene que ser
+    b) para la A es el mismo caso pero para que imprima b P tiene que ser false
+    
