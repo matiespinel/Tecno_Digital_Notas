@@ -2,3 +2,12 @@
 2)  a) en el a para que imprima a p y q tiene que ser verdadera y para que sea b solo p tiene que ser
     b) para la A es el mismo caso pero para que imprima b P tiene que ser false
     
+
+Encabezado: obtener_clima(tem: float) -> float: 
+    Requiere: nada
+    Devuelve: string que indica el estado del clima 
+Ejemplos de uso:
+menor a 10, 10 : frio, para ver que devuelva bien 
+10.1, 16.9 : templado ppara probar las limitaciones 
+17, 25 para probar limitaciones
+25.5, 30 para ver que devuelva  
