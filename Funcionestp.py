@@ -1,17 +1,24 @@
-def simBP (a : int, b : int) -> int:
-    bin_A = bin(a)[2:]
-    bin_B = bin(b)[2:]
-    i = 0
-    conta = 0
-    while i < len(bin_A):
+def simBP(n:int, m:int) -> int:
+    ''' Requiere: n>0, m>0
+        Devuelve: la similitud binaria de prefijo entre n y m, definida como
+        la longitud del prefijo común más largo entre las representaciones
+        binarias de n y m. '''
+    bin_A : int  = bin(n).replace('0b','')
+    bin_B : int = bin(m).replace('0b','')
+    i : int = 0
+    conta : int = 0
+    while i < len(bin_A) and i < len(bin_B):
         if bin_A[i] == bin_B[i]:
             conta = conta + 1
             i = i + 1
-        else: return conta
-        
+        else: return conta      
     return conta
-print(simBP(4,4))     
-def conjunto_a_k(a : int, b : int, n : int, k : int):
+    
+
+def cantidad_con_simBP_en_intervalo(a : int, b : int, n : int, k : int) -> int:
+    ''' Requiere: n>0, a>0, b>0, k>0, a<=b
+        Devuelve: la cantidad de números entre a y b (inclusive)
+        cuya simBP con n es k.'''
     i = a
     while (i <= b):
         resSIMBP = simBP(i, n)
@@ -21,17 +28,35 @@ def conjunto_a_k(a : int, b : int, n : int, k : int):
         i = i + 1
     return res
 
-def existe_simBP(a : int, b : int, n : int, k : int):
-    if conjunto_a_k(a, b, n, k) > 0:
+def existe_con_simBP_en_intervalo(a : int, b : int, n : int, k : int) -> bool:
+    ''' Requiere: n>0, a>0, b>0, k>0, a<=b
+        Devuelve: True si existe algún número entre a y b (inclusive)
+        cuya simBP con n es k; False en caso contrario.'''
+    if cantidad_con_simBP_en_intervalo(a, b, n, k) > 0:
         return True
     else:
         return False
 
-def simBP_Menores(a : int, b : int, n : int):
-    tienen = []
-    i = a
-    t = 0
-    while (i <= b):
+def numero_con_mayor_simBP_en_intervalo(a: int, b: int, n: int) -> int:
+    ''' 
+    Requiere: n > 0, a > 0, b > 0, a <= b
+    Devuelve: el número entre a y b (inclusive) con mayor simBP con n.
+              En caso de haber más de uno, devuelve el menor de ellos.
+    '''
+    numBin : int = 0
+    numList : int = 0
+    i : int = a
+    while i <= b:
         resSIMBP = simBP(i, n)
-        tienen.append(i ,resSIMBP)
-        i = i + 1
+        if resSIMBP > numBin:
+            numBin = resSIMBP
+            numList = i
+        elif resSIMBP == numBin:
+            if i < numList:
+                numList = i
+                
+        i += 1
+    return numList, numBin
+    
+
+print (numero_con_mayor_simBP_en_intervalo(1, 5, 3))
