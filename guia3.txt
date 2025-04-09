@@ -11,3 +11,38 @@ menor a 10, 10 : frio, para ver que devuelva bien
 10.1, 16.9 : templado ppara probar las limitaciones 
 17, 25 para probar limitaciones
 25.5, 30 para ver que devuelva  
+el ciclo termina ya que la condicion de su terminacion es que i sea menor que n y en cada iteracion del ciclo i incrmeenta en 1, por consecuente, en algun momento va a llegar a n.
+Correctitud: Demostracio n de que la funcion cumple con lo que dice su especificacion.
+Basicamente recorrer la funcion como Ejemplos y destrando el estado del programa (valores de las variables declaradas)
+ejemplo: Luego de las lines 2 y 3 res = " " ; i = 0
+se llega al while para i = 0, 1, 2, 3...
+res va a terminar siendo las concatenacion de "x" i veces. 
+y el ciclo temrina cuando i = n 
+y res = (concatenacion de "x" i veces.) = predicado invariante 
+
+
+
+la funcion incia con 3 variables declaradas: n>=0 ; res = 0; i = 0
+el ciclo tiene la condicion de que i debe ser menor a n 
+dentro del ciclo se suma 1 a i por cada iteracion 
+por ende i puede alcanzar a n lo que hace falsa la condicion del ciclo haciendo que este temrine.
+Sumatoria (3):
+i = 0
+res = 0 
+ciclo(o < 3) : i = 1, res = 1
+2) res 1 ; i = 1
+Ciclo (1 < 3) : i = 2, res = 3
+3) res 3 ; i = 2
+Ciclo (2 < 3) : i = 3, res = 6
+4) res 6 ; i = 3 
+Ciclo (3 < 3) = false 
+se devuelve res = 6
+res equivale la Sumatoria de todos los enteros entre 0 y n. || Res vale la suma entre los primeros enteros entre 0 e i.
+Sumatoria(4) = 10
+Sumatoria(5) = 15
+Sumatoria(6) = 21
+Sumatoria(7) = 28
+Sumatoria(8) = 36
+Sumatoria(9) = 45 
+ciclo de for:
+for 
