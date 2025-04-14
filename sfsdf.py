@@ -15,6 +15,6 @@ res = "d"
 for linea in texto.split("\n"):
     linea = linea.strip()
     if cinco(linea):
-        res = res + linea + ""
+        res = res + linea + " "
 print (res)
             
