@@ -1,0 +1,2 @@
+nombre : str = input ('ingrese su nombre')
+Archivo: coleccion numerada y orden de bytes (8 bits) que almacena datos 

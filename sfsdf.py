@@ -1,18 +1,20 @@
-def simBP(n, m):
-    bin_n = bin(n)[2:]
-    bin_m = bin(m)[2:]
-    count = 0
-    for i in range(min(len(bin_n), len(bin_m))):
-        if bin_n[i] == bin_m[i]:
-            count += 1
-        else:
-            break
-    return count
+f = open("palabras.txt")
+texto = f.read()  
+def contar (letra, palabra):
+    rs = 0
+    i = 0
+    while i < len(palabra):
+        if palabra[i] == letra:
+            rs = rs + 1
+        i = i +1
+    return rs
 
-total = 0
-for i in range(20, 92):
-    if simBP(i, 1000) == 3:
-        print(f"{i}: {bin(i)[2:]}")
-        total += 1
-
-print("Total:", total)
+def cinco(linea):
+    return contar("a", linea) == 1 and contar("e", linea) == 1 and contar("i", linea) == 1 and contar("o", linea) == 1 and contar("u", linea) == 1
+res = "d"        
+for linea in texto.split("\n"):
+    linea = linea.strip()
+    if cinco(linea):
+        res = res + linea + ""
+print (res)
+            
