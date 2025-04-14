@@ -27,9 +27,14 @@ print(r)
 r = f(x, b) #va a dar error pq no esta definida
 print(r)
 
-def dist (a: float,a2 : float,b : float,b2 : float ) -> float:
-    distaciaX = a2 - a  #requiere nada, devuelve la dsitancia en un float
-    distaciaY = b2 - b
-    return math.sqrt(distaciaX**2 + distaciaY**2)
-def cicular(a : str, b: str):
-    return a in (b + b) #requiere que len(a) = len(b)
+def afss (ash):
+    i = 0
+    nums = "0123456789"
+    vr = 0
+    while (1 < len(ash)):
+        if ( ash[i] in nums): 
+            vr = vr + 1
+        i = i + 1
+    return vr
+
+print(afss("D1T3LL4"))
