@@ -4,18 +4,11 @@ def simbp_con_lista(n: int, xs : list[int]) -> list[int]:
         la longitud del prefijo común más largo entre las representaciones
         binarias de n y m.) entre n y todos los elementos de xs
     """
-    bin_n : str = bin(n).replace('0b','')
     #se puede hacer con for o while?
     res: list[str] = []
-    #for
-    #for x in xs:
-    #    bin_x : str = bin(x).replace('0b','')
-    #    res.append(simBP(bin_n, bin_x))
-    #return res
     i : int = 0
     while i < len(xs):
-        bin_x : str = bin(xs[i]).replace('0b','')
-        res.append(simBP(bin_n, bin_x))
+        res.append(simBP(n, xs[i]))
         i = i + 1
 
     return res 
@@ -56,3 +49,11 @@ def simBP(n:int, m:int) -> int:
         else:
             terminacion = False
     return conta
+
+
+
+nums = [-21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]
+for x in nums:
+    print(simBP(2, x))
+
+print (simBP(2**30, 2**31))

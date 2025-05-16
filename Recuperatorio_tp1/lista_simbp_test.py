@@ -7,18 +7,38 @@ from lista_simbp import simbp_con_lista, simBP
 class TestListSimBP(unittest.TestCase):
 
     def test_vacio(self):
+        #que funcione con listas vacias
         self.assertEqual(simbp_con_lista(1, []),[] )
         self.assertEqual(simbp_con_lista(2, []),[] )
         self.assertEqual(simbp_con_lista(3, []),[] )
-        #se pasa la funcion que querramos, los valores de entrada y despues la salida esperada.
+        
     def test_muchos_numeros(self):
-        self.assertEqual(simbp_con_lista(int(2), [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]),[1,2,1,2,2,1,1,2,2,2,2,1,1,1,2,2,2,2,2])
+        #que funcione con listas largas 
+        self.assertEqual(simbp_con_lista(2, [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]),[1,2,1,2,2,1,1,2,2,2,2,1,1,1,1,2,2,2,2,2])
+        self.assertEqual(simbp_con_lista(2, [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]),[2,2,2,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2])
     def test_prefijos(self):
         #que el binario de n este dentro de la representaacion bianria de los numeros de la lista
-        pass
-    def test_todos_cero(self):
-        pass
+        self.assertEqual(simbp_con_lista(7,[14, 59, 63, 122, 127, 990]), [3,3,3,3,3,3]) # 1110 # 111011 # 111111 # 1111010 # 1111111 # 1111011110
+        self.assertEqual(simbp_con_lista(9, [144, 145, 146, 147, 148, 149]), [4, 4, 4, 4, 4, 4]) #10010000 # 10010001 #10010010 #10010011 #10010100 #10010101
+        self.assertEqual(simbp_con_lista(6, [96, 97, 98, 99, 100, 101]), [3, 3, 3, 3, 3, 3]) # 1100000 #1100001 # 1100010 # 1100011 # 1100100 # 1100101
+        self.assertEqual(simbp_con_lista(10, [160, 161, 162, 163, 164, 165]), [4, 4, 4, 4, 4, 4]) # 10100000 # 10100001 # 10100010 # 10100011 # 10100100 # 10100101
+    def test_muy_grandes(self):
+        self.assertEqual(simbp_con_lista(2**30, [2**30, 2**31, 2**32, 2**33, 2**34, 2**35, 2**36, 2**30-1]),[31,31,31,31,31,31,31,1])
+        self.assertEqual(simbp_con_lista(2**20, [2**20, 2**21, 2**22, 2**23, 2**24, 2**25]),[21, 21, 21, 21, 21, 21])
+    def test_aleatorios(self):
+        #dado un n cualquiera y una lista de numeros aleatorios desordenados
+        self.assertEqual(simbp_con_lista(13, [3, 13, 26, 7, 20, 255]),[2, 4, 4, 2, 1, 2]) 
+        self.assertEqual(simbp_con_lista(4, [0, 1, 2, 3, 4, 5]),[0, 1, 2, 1, 3, 2])
+        self.assertEqual(simbp_con_lista(19, [19, 18, 17, 255, 3, 7]),[5, 4, 3, 1, 1, 1])
+    # bin(19)=10011
+    def test_n_mayor(self):
+        #el argumento n > al mayor numero dentro de la lista
+        self.assertEqual(simbp_con_lista(20, [1, 2, 3, 4]),[1, 2, 1, 2])
+        self.assertEqual(simbp_con_lista(100, [50, 60, 70]),[6, 2, 1])
+        self.assertEqual(simbp_con_lista(255, [128, 64, 32]),[1, 1, 1])
+        self.assertEqual(simbp_con_lista(1023, [512, 511, 1000]),[1, 9, 5])
     
+
     
     def test_simBP_mismo_numero(self):
         # Ambos argumentos coinciden.
@@ -96,3 +116,11 @@ unittest.main()
 # 30 11110
 # 31 11111
 # 32 100000
+# 33 100001
+# 34 100010
+# 35 100011
+# 36 100100
+# 37 100101
+# 38 100110
+# 39 100111
+# 40 101000
