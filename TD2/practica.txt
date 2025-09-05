@@ -1,0 +1,22 @@
+implementar div.2 y MUL.2.
+DIV_2:
+RB_enOut ALU_enA RB_selectindexOut = 0 
+ALU_OP=DIV_2 ALU_opW
+RB_enIn ALU_enOut RB_selectIndexOut=0
+reset_microOp
+
+MUL_2:
+RB_enOut ALU_enA RB_selectindexOut = 0 
+ALU_OP=MUL_2 ALU_opW
+RB_enIn ALU_enOut RB_selectIndexOut=0
+reset_microOp
+
+DIV_2:
+SLR-IN1 := Rx
+DIV_2
+Rx := SLR-OUT
+
+MUL_2:
+SLR-IN1 := Rx
+MUL_2
+Rx := SLR-OUT
