@@ -101,13 +101,19 @@
     reset_microOp
 
 
-;que almacena en la direcci´on pasada
-;como par´ametro el n´umero almacenado en la pila. Esta instrucci´on debe dejar la pila consistente, es decir,
-;quitando el dato de la pila. Se recomienda utilizar como c´odigo de operacion
+;almacena en la direccion pasada como parametro el numero almacenado en la pila. Esta instruccion debe dejar la pila consistente, es decir,
+;quitando el dato de la pila. Se recomienda utilizar como codigo de operacion
 ;el 0x0E
 01110: ; STRPOP
-    MM_enAddr                     RB_enOut RB_selectIndexOut=0 ; addr <- Rx
-    MM_load                       RB_enOut RB_selectIndexOut=1 ; [Rx] <- Ry
+    MM_enAddr                       RB_enOut RB_selectSP        ; addr <- R7
+    MM_enOut                        ALU_enA                     ; A <- [R7]
+    MM_enAddr                       DE_enOutImm                 ; addr <- M
+    MM_load                         ALU_enOut                   ; [M] <- dato
+    ALU_enA                         RB_enOut RB_selectSP        ; A <- R7
+    ALU_enB                         ALU_enOut ALU_OP=cte0x01    ; B <- 1
+    RB_enIn RB_selectSP             ALU_enOut ALU_OP=ADD        ; R7 <- R7+1
+    reset_microOp
+
     
 ;que hace el inverso de los 4 bits m´as significativos
 ;de un registro sin modificar los otros 4. El resultado se almacena en el mismo registro. Para
