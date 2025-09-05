@@ -100,30 +100,25 @@
     PC_load                         MM_enOut                       ; PC <- [Rx]
     reset_microOp
 
-;que hace el inverso de los 4 bits m´as significativos
-;de un registro sin modificar los otros 4. El resultado se almacena en el mismo registro. Para
-;implementar esta instruccion se debe modificar el circuito de la ALU para lo operacion 14.
-
-01110: ; NEGHIGHNIBBLE
-    RB_enOut ALU_enA RB_selectIndexOut=0 
-    ALU_OP=NEGHIGHNIBBLE ALU_opW
-    RB_enIn ALU_enOut RB_selectIndexIn=0
-    reset_microOp
 
 ;que almacena en la direcci´on pasada
 ;como par´ametro el n´umero almacenado en la pila. Esta instrucci´on debe dejar la pila consistente, es decir,
 ;quitando el dato de la pila. Se recomienda utilizar como c´odigo de operacion
 ;el 0x0E
-01111: ; STRPOP
-    MM_enAddr                     DE_enOutImm                  ; addr <- M
-    MM_load                       RB_enOut RB_selectIndexOut=0 ; [M] <- Rx
-    ALU_enA                         RB_enOut RB_selectIndexOut=0   ; A <- Rx
-    ALU_enB                         ALU_enOut ALU_OP=cte0x01       ; B <- 1
-    RB_enIn RB_selectIndexIn=0      ALU_enOut ALU_OP=ADD           ; Rx <- Rx + 1
-    MM_enAddr                       RB_enOut RB_selectIndexOut=0   ; addr <- Rx
-    RB_enIn RB_selectIndexIn=1      MM_enOut                       ; Ry <- [Rx]
-    reset_microOp
+01110: ; STRPOP
+    MM_enAddr                     RB_enOut RB_selectIndexOut=0 ; addr <- Rx
+    MM_load                       RB_enOut RB_selectIndexOut=1 ; [Rx] <- Ry
     
+;que hace el inverso de los 4 bits m´as significativos
+;de un registro sin modificar los otros 4. El resultado se almacena en el mismo registro. Para
+;implementar esta instruccion se debe modificar el circuito de la ALU para lo operacion 14.
+
+01111: ; NEGHIGHNIBBLE
+    RB_enOut ALU_enA RB_selectIndexOut=0 
+    ALU_OP=NEGHIGHNIBBLE ALU_opW
+    RB_enIn ALU_enOut RB_selectIndexIn=0
+    reset_microOp
+
 10000: ; STR [M] <- Rx
     MM_enAddr                     DE_enOutImm                  ; addr <- M
     MM_load                       RB_enOut RB_selectIndexOut=0 ; [M] <- Rx
