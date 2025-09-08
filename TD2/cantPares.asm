@@ -49,6 +49,7 @@ cantPares:
         POP |R7|, R6
 
 	RET |R7|
+    JMP halt
 
 
 p:

@@ -1,0 +1,49 @@
+     main |00| SET R7 , 0xFF
+          |02| SET R0 , p
+          |04| SET R1 , 0x10
+          |06| SET R4 , 0x00
+          |08| CALL | R7 | , cantPares
+     halt |0a| JMP halt
+cantPares |0c| PUSH | R7 | , R0
+          |0e| PUSH | R7 | , R1
+          |10| PUSH | R7 | , R2
+          |12| PUSH | R7 | , R3
+          |14| PUSH | R7 | , R6
+          |16| SET R4 , 0x00
+          |18| SET R2 , 0x01
+          |1a| SET R6 , 0x00
+     loop |1c| CMP R1 , R6
+          |1e| JZ rest
+          |20| LOAD R3 , [ R0 ]
+          |22| AND R3 , R2
+          |24| JZ par
+    impar |26| ADD R0 , R2
+          |28| SUB R1 , R2
+          |2a| JMP loop
+      par |2c| ADD R4 , R2
+          |2e| ADD R0 , R2
+          |30| SUB R1 , R2
+          |32| JMP loop
+     rest |34| POP | R7 | , R3
+          |36| POP | R7 | , R2
+          |38| POP | R7 | , R1
+          |3a| POP | R7 | , R0
+          |3c| POP | R7 | , R6
+          |3e| RET | R7 |
+          |40| JMP halt
+        p |42| DB 0x01
+          |43| DB 0x02
+          |44| DB 0x04
+          |45| DB 0x08
+          |46| DB 0x03
+          |47| DB 0x03
+          |48| DB 0xA1
+          |49| DB 0xC0
+          |4a| DB 0xFF
+          |4b| DB 0x40
+          |4c| DB 0x55
+          |4d| DB 0xCC
+          |4e| DB 0xBD
+          |4f| DB 0x45
+          |50| DB 0x9A
+          |51| DB 0xEE
