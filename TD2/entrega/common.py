@@ -114,7 +114,7 @@ opcodes = {"ADD"  : 1,  "ADC"  : 2, "SUB"   : 3,
            "AND"  : 4,  "OR"   : 5, "XOR"   : 6,
            "CMP"  : 7,   "MOV" : 8,
            "PUSH" : 9,  "POP"  : 10,
-           "CALL" : 11, "CALLm": 12, "RET"  : 13, "STRPOP" : 14, "NEGHIGHNIBBLE" : 15,
+           "CALL" : 11, "CALLm": 12, "RET"  : 13, "STRPOP" : 15, "NEGHIGHNIBBLE" : 14,
            "STR"  : 16, "LOAD" : 17, "STRr" : 18, "LOADr": 19,
            "JMP"  : 20, "JC"   : 21, "JZ"   : 22, "JN"   : 23, "JO"  :24,
            "SHRA" : 25, "SHR"  : 26, "SHL"  : 27,
@@ -256,6 +256,11 @@ def parseInstructions(instructions,labels):
                 if i[5][0]=="R":
                     # PUSH |Rx|, Ry || POP |Rx|, Ry || CALL |Rx|, Ry
                     n = buidInst({"O":opcodes[i[0]], "X":reg2num(i[2]), "Y":reg2num(i[5])})
+                elif i[0]=="STRPOP":
+                # STRPOP |Rx|, M
+                    if i[1]=="|" and i[3]=="|" and i[4]==",":
+                        n = buidInst({"O":opcodes[i[0]], "X":reg2num(i[2]), "M":mem2num(i[5],labels)})
+                        appendParse(parseBytes,parseHuman,i,n)
                 else:
                     # CALL |Rx|, M
                     n = buidInst({"O":opcodes[i[0]+'m'], "X":reg2num(i[2]), "M":mem2num(i[5],labels)})
@@ -394,8 +399,8 @@ ALUops={ "RESERVED0"  : 0,
          "LOAD_FLAGS" : 11,
          "cte0x00"    : 12,
          "cte0x01"    : 13,
-         "cte0x02"    : 14,
-         "NEGHIGHNIBBLE"    : 15 }
+         "NEGHIGHNIBBLE"    : 14,
+         "cte0xff"    : 15}
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Build micro operations functions
