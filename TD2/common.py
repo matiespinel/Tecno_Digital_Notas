@@ -101,11 +101,11 @@ def tokenizator(filename):
 # Assembly code constants
 
 type_RR = ["ADD","ADC","SUB","AND","OR" ,"XOR","CMP","MOV"]
-type_SR = ["PUSH", "POP", "CALL"]
+type_SR = ["PUSH", "POP", "CALL", "STRPOP"]
 type_S  = ["RET"]
 type_RM = ["STR","LOAD"]
 type_M  = ["JMP","JC","JZ","JN","JO"]
-type_RF = ["READF","LOADF"]
+type_RF = ["READF","LOADF","NEGHIGHNIBBLE"]
 type_RS = ["SHRA","SHR","SHL"]
 type_RI = ["SET"]
 def_DB  = ["DB"]

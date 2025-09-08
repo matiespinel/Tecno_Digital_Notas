@@ -108,10 +108,19 @@
     MM_enAddr                       RB_enOut RB_selectSP        ; addr <- R7
     MM_enOut                        ALU_enA                     ; A <- [R7]
     MM_enAddr                       DE_enOutImm                 ; addr <- M
-    MM_load                         ALU_enOut                   ; [M] <- dato
+    ALU_enB                         ALU_enOut ALU_OP=cte0x00   ; B <- 0 (se hace para mantener el dato en A) (preguntar el lunes)
+    MM_load                         ALU_enOut ALU_OP=ADD       ; [M] <- A + 0   (dato de la pila)
     ALU_enA                         RB_enOut RB_selectSP        ; A <- R7
     ALU_enB                         ALU_enOut ALU_OP=cte0x01    ; B <- 1
     RB_enIn RB_selectSP             ALU_enOut ALU_OP=ADD        ; R7 <- R7+1
+    reset_microOp
+
+; otra opcion???
+    MM_enAddr                     DE_enOutImm                  ; addr <- M
+    MM_load                       RB_enOut RB_selectIndexOut=0 ; [M] <- Rx
+    ALU_enA                         RB_enOut RB_selectIndexOut=0   ; A <- Rx
+    ALU_enB                         ALU_enOut ALU_OP=cte0x01       ; B <- 1
+    RB_enIn RB_selectIndexIn=0      ALU_enOut ALU_OP=ADD           ; Rx <- Rx + 1
     reset_microOp
 
     
