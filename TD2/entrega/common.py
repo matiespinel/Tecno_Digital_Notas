@@ -260,7 +260,6 @@ def parseInstructions(instructions,labels):
                 # STRPOP |Rx|, M
                     if i[1]=="|" and i[3]=="|" and i[4]==",":
                         n = buidInst({"O":opcodes[i[0]], "X":reg2num(i[2]), "M":mem2num(i[5],labels)})
-                        appendParse(parseBytes,parseHuman,i,n)
                 else:
                     # CALL |Rx|, M
                     n = buidInst({"O":opcodes[i[0]+'m'], "X":reg2num(i[2]), "M":mem2num(i[5],labels)})
