@@ -104,15 +104,24 @@
 ;almacena en la direccion pasada como parametro el numero almacenado en la pila. Esta instruccion debe dejar la pila consistente, es decir,
 ;quitando el dato de la pila. Se recomienda utilizar como codigo de operacion
 ;el 0x0E
-01110: ; STRPOP
-    MM_enAddr                       RB_enOut RB_selectSP        ; addr <- R7
-    MM_enOut                        ALU_enA                     ; A <- [R7]
-    MM_enAddr                       DE_enOutImm                 ; addr <- M
-    ALU_enB                         ALU_enOut ALU_OP=cte0x00   ; B <- 0 (se hace para mantener el dato en A) (preguntar el lunes)
-    MM_load                         ALU_enOut ALU_OP=ADD       ; [M] <- A + 0   (dato de la pila)
-    ALU_enA                         RB_enOut RB_selectSP        ; A <- R7
-    ALU_enB                         ALU_enOut ALU_OP=cte0x01    ; B <- 1
-    RB_enIn RB_selectSP             ALU_enOut ALU_OP=ADD        ; R7 <- R7+1
+01110: ; STRPOP |Rx|, M   ; Rx es SP (crece hacia arriba: POP = Rx <- Rx + 1)
+
+    ; Rx <- Rx + 1
+    RB_selectIndexOut=0   RB_enOut     ALU_enA
+    ALU_OP=cte0x01        ALU_enOut    ALU_enB
+    ALU_OP=ADD            ALU_enOut    RB_selectIndexIn=0   RB_enIn
+
+    ; A <- Mem[Rx]        (primero fijo la dirección, luego leo)
+    RB_selectIndexOut=0   RB_enOut     MM_enAddr
+    MM_enOut              ALU_enA
+
+    ; Addr <- M           (fijo dirección destino inmediata)
+    DE_enOutImm           MM_enAddr
+
+    ; Bus <- A (passthrough con +0)  y escribo en Mem[M]
+    ALU_OP=cte0x00        ALU_enOut    ALU_enB
+    ALU_OP=ADD            ALU_enOut    MM_load
+
     reset_microOp
 
 ;que hace el inverso de los 4 bits m´as significativos
@@ -120,9 +129,9 @@
 ;implementar esta instruccion se debe modificar el circuito de la ALU para lo operacion 14.
 
 01111: ; NEGHIGHNIBBLE
-    RB_enOut ALU_enA RB_selectIndexOut=0 
-    ALU_OP=NEGHIGHNIBBLE ALU_opW
-    RB_enIn ALU_enOut RB_selectIndexIn=0
+    RB_enOut ALU_enA RB_selectIndexOut=0 ; meto dato en ALU
+    ALU_OP=NEGHIGHNIBBLE ALU_opW         ; selecciono operacion nuev
+    RB_enIn ALU_enOut RB_selectIndexIn=0 ; Lo saco
     reset_microOp
 
 10000: ; STR [M] <- Rx

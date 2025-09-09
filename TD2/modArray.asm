@@ -30,6 +30,7 @@ modArray:
         JZ mult
         JMP resto           
     resto:
+        LOAD R3, [R0]   ; volver a cargar valor original
         MOV R4, R3          ; copia valor original a R4
         SHL R3, 1           ; ×4
         SHL R3, 1

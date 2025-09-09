@@ -18,43 +18,44 @@ modArray |0a| PUSH | R7 | , R0
          |22| AND R3 , R6
          |24| JZ mult
          |26| JMP resto
-   resto |28| MOV R4 , R3
-         |2a| SHL R3 , 1
+   resto |28| LOAD R3 , [ R0 ]
+         |2a| MOV R4 , R3
          |2c| SHL R3 , 1
-         |2e| ADD R3 , R4
-         |30| SUB R3 , R2
-         |32| STR [ R0 ] , R3
-         |34| ADD R0 , R2
-         |36| SUB R1 , R2
-         |38| JMP loop
-    mult |3a| LOAD R3 , [ R0 ]
-         |3c| SHR R3 , 1
+         |2e| SHL R3 , 1
+         |30| ADD R3 , R4
+         |32| SUB R3 , R2
+         |34| STR [ R0 ] , R3
+         |36| ADD R0 , R2
+         |38| SUB R1 , R2
+         |3a| JMP loop
+    mult |3c| LOAD R3 , [ R0 ]
          |3e| SHR R3 , 1
-         |40| SUB R3 , R2
-         |42| STR [ R0 ] , R3
-         |44| ADD R0 , R2
-         |46| SUB R1 , R2
-         |48| JMP loop
-     fin |4a| POP | R7 | , R6
-         |4c| POP | R7 | , R5
-         |4e| POP | R7 | , R3
-         |50| POP | R7 | , R2
-         |52| POP | R7 | , R1
-         |54| POP | R7 | , R0
-         |56| RET | R7 |
-       p |58| DB 0x01
-         |59| DB 0x02
-         |5a| DB 0x04
-         |5b| DB 0x08
-         |5c| DB 0x03
-         |5d| DB 0x03
-         |5e| DB 0xA1
-         |5f| DB 0xC0
-         |60| DB 0xFF
-         |61| DB 0x40
-         |62| DB 0x55
-         |63| DB 0xCC
-         |64| DB 0xBD
-         |65| DB 0x45
-         |66| DB 0x9A
-         |67| DB 0xEE
+         |40| SHR R3 , 1
+         |42| SUB R3 , R2
+         |44| STR [ R0 ] , R3
+         |46| ADD R0 , R2
+         |48| SUB R1 , R2
+         |4a| JMP loop
+     fin |4c| POP | R7 | , R6
+         |4e| POP | R7 | , R5
+         |50| POP | R7 | , R3
+         |52| POP | R7 | , R2
+         |54| POP | R7 | , R1
+         |56| POP | R7 | , R0
+         |58| RET | R7 |
+       p |5a| DB 0x01
+         |5b| DB 0x02
+         |5c| DB 0x04
+         |5d| DB 0x08
+         |5e| DB 0x03
+         |5f| DB 0x03
+         |60| DB 0xA1
+         |61| DB 0xC0
+         |62| DB 0xFF
+         |63| DB 0x40
+         |64| DB 0x55
+         |65| DB 0xCC
+         |66| DB 0xBD
+         |67| DB 0x45
+         |68| DB 0x9A
+         |69| DB 0xEE
