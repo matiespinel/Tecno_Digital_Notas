@@ -28,7 +28,7 @@ loop:
     AND R3, R2      ; R3 = R3 & 1 (chequeo de paridad)
     JZ par          ; Si es cero (par), saltar a 'par'
 
-; impar (fall-through):
+; impar :
     JMP update ; Si es impar, solo actualiza
 
 par:
@@ -40,7 +40,7 @@ update:
     JMP loop
 
 fin:
-    POP |R7|, R6    ; Restaurar registros en orden INVERSO a PUSH
+    POP |R7|, R6    ; Restaurar registros 
     POP |R7|, R3
     POP |R7|, R2
     POP |R7|, R1
