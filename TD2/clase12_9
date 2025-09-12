@@ -85,4 +85,3 @@ section .text  ; Esta sección se usa para el código del programa
     ; termina el programa
     mov eax, 60
     syscall
-
