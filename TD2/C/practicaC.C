@@ -46,6 +46,7 @@ int esPar(int a) {
     return !(a & 1);
 }
 // for
+
 int print10() {
     for (int i = 0; i < 10; i++) {
     printf("%d\n", i);
