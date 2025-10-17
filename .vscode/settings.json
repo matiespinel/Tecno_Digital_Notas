@@ -8,5 +8,11 @@
     ],
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
-    "python.REPL.enableREPLSmartSend": false
+    "python.REPL.enableREPLSmartSend": false,
+    "files.associations": {
+        "practicaC.C": "cpp",
+        "17_10_clasePract.C": "cpp",
+        "1.C": "cpp",
+        "GuiaDeEjer.C": "cpp"
+    }
 }
