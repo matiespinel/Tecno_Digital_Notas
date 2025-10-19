@@ -1,5 +1,6 @@
 // ejercicio 1 con strings 
 #include <stdio.h>
+// EJER 1
 int len(char* s){
     int contador = 0;
     int i = 0; // interador 
@@ -30,6 +31,34 @@ void replaceChar(char* s, char old, char nuevow){
         } 
     }
 }
+
+char* concatenate(char* s1, char* s2){// preguntar lo de liberar memoria. 
+    char* ret = s1;
+
+    for (int i = 0; i< len(s2);i++){
+        char caracter = s2[i];
+        ret[i + len(ret)] = caracter; 
+    }
+    return ret; 
+    }
+
+// Ejercicio 2
+int* merge(int* A, int sizeA, int* B, int sizeB){
+    int* ret;
+    for (int i = 0; i < sizeA && i < sizeB; i++){
+        int num1 = A[i];
+        int num2 = B[i];
+        if (num1 > num2){
+            ret[i] = num2;
+            ret[i+1] = num1;
+        }else {
+            ret[i] = num1;
+            ret[i+1] = num2;
+        }
+
+    }
+}
+
 
 int main(){
 
