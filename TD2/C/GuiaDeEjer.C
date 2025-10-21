@@ -45,6 +45,7 @@ char* concatenate(char* s1, char* s2){// preguntar lo de liberar memoria.
 // Ejercicio 2
 int* merge(int* A, int sizeA, int* B, int sizeB){
     int* ret;
+    int cont;
     for (int i = 0; i < sizeA && i < sizeB; i++){
         int num1 = A[i];
         int num2 = B[i];
@@ -55,11 +56,69 @@ int* merge(int* A, int sizeA, int* B, int sizeB){
             ret[i] = num1;
             ret[i+1] = num2;
         }
+        cont= i;
 
     }
+    if (cont== sizeA && cont == sizeB){ return ret;}else{
+        if(cont < sizeA){
+            for(int i = cont; i < sizeA; i++){
+                int num1 = A[i];
+                ret[i+1] = num1;
+            }
+            return ret; 
+        }else{
+            for(int i = cont; i < sizeB; i++){
+                int num1 = A[i];
+                ret[i+1] = num1;
+            }
+            return ret; 
+
+        } }
 }
+float* mergefloat(float* A, int sizeA, float* B, int sizeB){
+    float* ret;
+    int cont;
+    for (int i = 0; i < sizeA && i < sizeB; i++){
+        float num1 = A[i];
+        float num2 = B[i];
+        if (num1 > num2){
+            ret[i] = num2;
+            ret[i+1] = num1;
+        }else {
+            ret[i] = num1;
+            ret[i+1] = num2;
+        }
+        cont= i;
 
+    }
+    if (cont== sizeA && cont == sizeB){ return ret;}else{
+        if(cont < sizeA){
+            for(int i = cont; i < sizeA; i++){
+                float num1 = A[i];
+                ret[i] = num1;
+            }
+            return ret; 
+        }else{
+            for(int i = cont; i < sizeB; i++){
+                float num1 = A[i];
+                ret[i] = num1;
+            }
+            return ret; 
 
-int main(){
-
+        } }
 }
+// Ejercicio 3
+char* longest(char* v[], int size){
+    char* ret = v[0];
+    for (int i =1; i < size; i++){
+        if (len(v[i]) > len(ret)){
+            ret = v[i];
+        }
+    }
+    return ret;
+}
+char* superConcatenate(char* v[], int size){}
+
+int main(){}
+
+
