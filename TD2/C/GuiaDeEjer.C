@@ -1,5 +1,6 @@
 // ejercicio 1 con strings 
 #include <stdio.h>
+#include <stdlib.h>
 // EJER 1
 int len(char* s){
     int contador = 0;
@@ -39,6 +40,9 @@ char* concatenate(char* s1, char* s2){// preguntar lo de liberar memoria.
         char caracter = s2[i];
         ret[i + len(ret)] = caracter; 
     }
+    ret[len(ret)] = 0;
+    free(s1);
+    free(s2);
     return ret; 
     }
 
