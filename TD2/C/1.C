@@ -31,6 +31,31 @@ float distance(vector_t*v1, vector_t*v2){
     float dy =v2 ->y - v1->y;//(*v2).x
     return sqrt((dx * dx) + (dy * dy));
 }
+int* arrayswap(int* v, int size){
+    int* ret;
+    for(int i = size-1; i>=0; i--){
+        ret[size-1 -i] = v[i];
+    }
+    return ret;
+}
+char* stringToUpper(char* s, int size){
+    for(int i =0; i < size; i++){
+        s[i] = s[i]- ("a" - "A");
+    } 
+    return s;
+}
+struct node {
+int data;
+struct node *next;
+};
+struct node* addFirst(struct node *p, int data) {
+    struct node *newNode = (struct node*) malloc(sizeof(struct node));
+    newNode->data = data;
+    newNode->next = p;
+    return newNode;
+}
+
+
 
 int main(){
 int size = 10;
