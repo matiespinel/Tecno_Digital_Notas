@@ -1,11 +1,5 @@
 #include <stdio.h>
-
-int main(){
-int size = 10;
-int arr[10] = {0,1,2,3,4,5,6,7,8,9};
-printf("%d\n", arregloCon5(arr, 10));
-mult3(arr, 10);
-}
+#include <math.h>
 int arregloCon5(int arr[], int size) {
     for(int i = 0; i < size; i++){
         int a = arr[i];
@@ -27,3 +21,25 @@ void mult3(int arr[], int size){
         } 
     }
 }
+typedef struct 
+{
+    float x;
+    float y;
+} vector_t;
+float distance(vector_t*v1, vector_t*v2){
+    float dx = v2 ->x - v1->x;//(*v2).x
+    float dy =v2 ->y - v1->y;//(*v2).x
+    return sqrt((dx * dx) + (dy * dy));
+}
+
+int main(){
+int size = 10;
+int arr[10] = {0,1,2,3,4,5,6,7,8,9};
+printf("%d\n", arregloCon5(arr, 10));
+mult3(arr, 10);
+vector_t puntoA = {.x = 1.0, .y = 1.0};
+vector_t puntoA = {.x = 4.0, .y= 5.0};
+
+
+}
+

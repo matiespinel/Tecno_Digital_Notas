@@ -121,8 +121,60 @@ char* longest(char* v[], int size){
     }
     return ret;
 }
-char* superConcatenate(char* v[], int size){}
+char* superConcatenate(char* v[], int size){
+    char* ret;
+    for(int i =0; i < size-1;i++){
+        ret = concatenate(v[i],v[i+1]);
+    }
+    return ret;
+}
+char* superConcatenateWithSep(char* v[], int size, char* s){
+    char* ret = v[0];
+    for(int i =1; i < size;i++){
+        ret = concatenate(ret, s);
+        ret = concatenate(ret, v[i]);
+    }
+    return ret;
+}
 
-int main(){}
+void pairOfEquals(char v[], int size, char** a, char** b) {
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (v[i] == v[j]) {
+                *a = &v[i];
+                *b = &v[j];
+                return;
+            }
+        }
+    }
+    *a = NULL;
+    *b = NULL;
+}
+
+
+int main(){
+    
+    char s[] = "hola";
+    char s2[] = "mundo";
+    char* joined = concatenate(s, s2);
+    printf("Concatenate: %s\n", joined);
+    free(joined);
+
+    char* arr[] = {"uno", "dos", "tres"};
+    char* joinedSep = superConcatenateWithSep(arr, 3, "-");
+    printf("superConcatenateWithSep: %s\n", joinedSep);
+    free(joinedSep);
+
+    int A[] = {1, 3, 5};
+    int B[] = {2, 4, 6, 7};
+    int* merged = merge(A, 3, B, 4);
+    printf("Merge: ");
+    for (int i = 0; i < 7; i++) printf("%d ", merged[i]);
+    printf("\n");
+    free(merged);
+
+    return 0;
+}
+
 
 
