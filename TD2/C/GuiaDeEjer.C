@@ -122,7 +122,11 @@ char* longest(char* v[], int size){
     return ret;
 }
 char* superConcatenate(char* v[], int size){
-    char* ret;
+    int cont = 0;
+    for (int i =0; i < size; i++){
+        cont += len(v[i]);
+    }
+    char* ret = (char*)malloc(sizeof(char) * (cont + 1));
     for(int i =0; i < size-1;i++){
         ret = concatenate(v[i],v[i+1]);
     }
@@ -151,6 +155,38 @@ void pairOfEquals(char v[], int size, char** a, char** b) {
     *b = NULL;
 }
 
+struct list {
+    struct node* primero; // indica a memoria donde inicia la lista
+    int size;
+};
+struct node {
+    int data;
+    struct node* next;
+};
+void getLast(struct list* twoLists, struct node** a, struct node** b){
+    struct node* lista1 = twoLists[0].primero;
+    struct node* lista2 = twoLists[1].primero;
+
+    if (lista1 == NULL) {
+        *a = NULL;
+    } else {
+        while (lista1->next != NULL) {
+            lista1 = lista1->next;
+        }
+        *a = lista1;
+    }
+
+    if (lista2 == NULL) {
+        *b = NULL;
+    } else {
+        while (lista2->next != NULL) {
+            lista2 = lista2->next;
+        }
+        *b = lista2;
+    }
+
+ 
+}
 
 int main(){
     
