@@ -136,6 +136,7 @@ GameBoard* gameBoardNew() {
 void gameBoardDelete(GameBoard* board) {
     // TODO: Liberar toda la memoria dinámica.
     // TODO: Recorrer cada GardenRow.
+    if (!board) return;// caso base
     for(int i = 0; i < GRID_ROWS; i++) {
         GardenRow* row = &board->rows[i];
         //hay planta?
@@ -148,12 +149,9 @@ void gameBoardDelete(GameBoard* board) {
                 free(segment);
                 segment = next_segment;
             }
-        free(row);
-    }
-    if (!board) return;// caso base
 
     // Recorremos todas las filas del jardín
-    for (int i = 0; i < GRID_ROWS; i++) {
+    
         GardenRow* row = &board->rows[i];
 
         // 1️⃣ Liberar todos los zombies de la fila
@@ -171,8 +169,8 @@ void gameBoardDelete(GameBoard* board) {
     free(board);
     // TODO: Finalmente, liberar el GameBoard.
     printf("Función gameBoardDelete no implementada.\n");
+    }
 }
-
 int gameBoardAddPlant(GameBoard* board, int row, int col) {
     // TODO: Encontrar la GardenRow correcta.
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
