@@ -144,7 +144,7 @@ void gameBoardDelete(GameBoard* board) {
             while(segment) {// recorro todos los segmentos de una fila
                 RowSegment* next_segment = segment->next;
                 if(segment->planta_data) {
-                    free(segment->planta_data);
+                    free(segment->planta_data);//revisar pq las planbtas no estan en malloc 
                 }
                 free(segment);
                 segment = next_segment;
@@ -174,13 +174,14 @@ void gameBoardDelete(GameBoard* board) {
 int gameBoardAddPlant(GameBoard* board, int row, int col) {
     // TODO: Encontrar la GardenRow correcta.
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
-    // TODO: Si se encuentra y tiene espacio, realizar la lógica de DIVISIÓN de segmento.
+    // TODO: Si se encuentra y tiene espacio, realizar la lógica de DIVISIÓN de segmento. sumar planta al segmento sin que se rompa la linea de segmentos solo se pasa plant data 
     // TODO: Crear la nueva `Planta` con memoria dinámica y asignarla al `planta_data` del nuevo segmento.
     printf("Función gameBoardAddPlant no implementada.\n");
     return 0;
 }
 
 void gameBoardRemovePlant(GameBoard* board, int row, int col) {
+    // mismo que arriba pero en vez de poner saco 
     // TODO: Similar a AddPlant, encontrar el segmento que contiene `col`.
     // TODO: Si es un segmento de tipo PLANTA, convertirlo a VACIO y liberar el `planta_data`.
     // TODO: Implementar la lógica de FUSIÓN con los segmentos vecinos si también son VACIO.
@@ -275,6 +276,22 @@ int main(int argc, char* args[]) {
         gameBoardDraw(game_board);
 
         // TODO: Agregar la lógica para ver si un zombie llegó a la casa y terminó el juego
+        for(int i = 0; i < GRID_ROWS; i++) {
+            GardenRow* row = &board->rows[i];
+            ZombieNode* znode = row->first_zombie;
+            while (znode) {//cuando sea NULL termina
+                ZombieNode* next_z = znode->next;//avanzo 
+                if (zombies[i].activo && zombies[i].rect.x < GRID_OFFSET_X - zombies[i].rect.w) {//esto se accede desde zombie data y usdando activo y pos sabes si llego;
+                printf("GAME OVER - Un zombie llego a tu casa!\n");
+                game_over = 1;
+                break;
+            }
+                znode = next_z;//sigo con el siguiente
+        }
+        row->first_zombie = NULL;
+        
+    
+        }
 
         SDL_Delay(16);
     }
