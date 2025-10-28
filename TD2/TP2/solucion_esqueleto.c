@@ -173,6 +173,18 @@ void gameBoardDelete(GameBoard* board) {
 }
 int gameBoardAddPlant(GameBoard* board, int row, int col) {
     // TODO: Encontrar la GardenRow correcta.
+    GardenRow* garden_row = &board->rows[row];
+    RowSegment* segment = garden_row->first_segment;
+    for (int = 0; i = col; i++)
+    {
+        RowSegment* next_segment = segment->next;
+        segment = next_segment;
+    }
+    if(segment->planta_data == NULL) {//si no hay planta es decir statuas null
+        //revisar pq las planbtas no estan en malloc 
+    }
+    
+    
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
     // TODO: Si se encuentra y tiene espacio, realizar la lógica de DIVISIÓN de segmento. sumar planta al segmento sin que se rompa la linea de segmentos solo se pasa plant data 
     // TODO: Crear la nueva `Planta` con memoria dinámica y asignarla al `planta_data` del nuevo segmento.
