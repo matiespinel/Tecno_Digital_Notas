@@ -5,6 +5,7 @@ char* strDuplicate(char* src){
     int contador = 0; 
     while (src[contador] != '\0') { // me fijo cuando termina el str 
         contador++;// longitud del src
+        printf("contador: %d\n", contador);//para ver que este andno bien
     }
     char* ret = (char*)malloc(sizeof(char) * (contador + 1)); // +1 para el \0?
     for(int i =0; i <contador; i++){
@@ -86,5 +87,76 @@ char* strConcatenate(char* src1, char* src2){
 
 //main
 int main(){
-    return 0;
+//strDuplicate:
+char* original = "Hola, Mundo!";
+printf("Original: %s\n", original);
+char* copia = strDuplicate(original);
+printf("Copia: %s\n", copia);
+free(copia);
+
+//1. String vac ́ıo.
+char* vacio = "";
+char* copiaVacio = strDuplicate(vacio);
+printf("Original: %s\n", vacio);
+printf("Copia: %s\n", copiaVacio);
+free(copiaVacio);
+
+//2. String de un car ́acter.
+char* unCaracter = "A";
+char* copiaUnCaracter = strDuplicate(unCaracter);
+printf("Original: %s\n", unCaracter);
+printf("Copia: %s\n", copiaUnCaracter);
+free(copiaUnCaracter);
+//3. String que incluya todos los caracteres v ́alidos distintos de cero.
+char* todosCaracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;':\",.<>/?`~ ";
+char* copiaTodosCaracteres = strDuplicate(todosCaracteres);
+printf("Original: %s\n", todosCaracteres);
+printf("Copia: %s\n", copiaTodosCaracteres);
+free(copiaTodosCaracteres);
+
+//strCompare:
+//1. Dos string vac ́ıos.
+char* vacio1 = "";
+char* vacio2 = "";
+printf("Comparacion de dos strings vacios: %d\n", strCompare(vacio1, vacio2)); // Esperado: 0
+printf("Comparacion de dos strings vacios: %d\n", strCompareASCII(vacio1, vacio2)); // Esperado: 0
+
+//2. Dos string de un car ́acter.
+char* charA = "A";
+char* charB = "B";
+printf("Comparacion de 'A' y 'B': %d\n", strCompare(charA, charB)); // Esperado: -1
+printf("Comparacion de 'A' y 'B': %d\n", strCompareASCII(charA, charB)); // Esperado: -1
+//3. Strings iguales hasta un car ́acter (hacer cmpStr(s1,s2) y cmpStr(s2,s1)).
+char* s1 = "HelloX";
+char* s2 = "HelloY";
+printf("Comparacion de '%s' y '%s': %d\n", s1, s2, strCompare(s1, s2)); // Esperado: -1
+printf("Comparacion de '%s' y '%s': %d\n", s2, s1, strCompare(s2, s1)); // Esperado: 1
+printf("Comparacion ASCII de '%s' y '%s': %d\n", s1, s2, strCompareASCII(s1, s2)); // Esperado: -1
+printf("Comparacion ASCII de '%s' y '%s': %d\n", s2, s1, strCompareASCII(s2, s1)); // Esperado: 1
+//4. Dos strings diferentes (hacer cmpStr(s1,s2) y cmpStr(s2,s1)).
+char* diff1 = "Sistema Operativo para para teclado";
+char* diff2 = "Pileta redonda en dias de lluvia";
+printf("Comparacion de '%s' y '%s': %d\n", diff1, diff2, strCompare(diff1, diff2)); // Esperado: 1
+printf("Comparacion de '%s' y '%s': %d\n", diff2, diff1, strCompare(diff2, diff1)); // Esperado: -1
+printf("Comparacion ASCII de '%s' y '%s': %d\n", diff1, diff2, strCompareASCII(diff1, diff2)); // Esperado: depende del contenido
+printf("Comparacion ASCII de '%s' y '%s': %d\n", diff2, diff1, strCompareASCII(diff2, diff1)); // Esperado: depende del contenido
+//strConcatenate:
+//1. Un string vac ́ıo y un string de 3 caracteres.
+char* vacioConcat = "";
+char* tresCaracteres = "abc";
+char* resultadoConcat1 = strConcatenate(strDuplicate(vacioConcat), strDuplicate(tresCaracteres));//el duplicado ya que la funcion deja libre la memoria
+printf("Concatenacion de vacio y 'abc': %s\n", resultadoConcat1);
+//2. Un string de 3 caracteres y un string vac ́ıo.
+char* resultadoConcat2 = strConcatenate(strDuplicate(tresCaracteres), strDuplicate(vacioConcat));
+printf("Concatenacion de 'abc' y vacio: %s\n", resultadoConcat2);
+//3. Dos strings de 1 caracter.
+char* charX = "X";
+char* charY = "Y";
+char* resultadoConcat3 = strConcatenate(strDuplicate(charX), strDuplicate(charY));
+//4. Dos strings de 5 caracteres.
+char* cincoX = "ABCDE";
+char* cincoY = "FGHIJ";
+char* resultadoConcat4 = strConcatenate(strDuplicate(cincoX), strDuplicate(cincoY));
+printf("Concatenacion de '%s' y '%s': %s\n", cincoX, cincoY, resultadoConcat4);
+return 0;
 }

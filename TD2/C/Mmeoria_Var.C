@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+    #include <stdio.h>
+    #include <stdlib.h>
 int x;
 int y = 35;
 // void *malloc(size_t size)

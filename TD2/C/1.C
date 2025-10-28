@@ -55,7 +55,8 @@ struct node* addFirst(struct node *p, int data) {
     return newNode;
 }
 
-
+//array to list lista enlazada apartir de un arreglo
+// sublist crea una sublista entre nodos [i,j]// limites de nodos que quiero incluir
 
 int main(){
 int size = 10;
