@@ -281,7 +281,7 @@ int main(int argc, char* args[]) {
             ZombieNode* znode = row->first_zombie;
             while (znode) {//cuando sea NULL termina
                 ZombieNode* next_z = znode->next;//avanzo 
-                if (zombies[i].activo && zombies[i].rect.x < GRID_OFFSET_X - zombies[i].rect.w) {//esto se accede desde zombie data y usdando activo y pos sabes si llego;
+                if (znode->zombie_data.activo && znode->zombie_data.pos_x < GRID_OFFSET_X) {//esto se accede desde zombie data y usdando activo y pos sabes si llego;
                 printf("GAME OVER - Un zombie llego a tu casa!\n");
                 game_over = 1;
                 break;
