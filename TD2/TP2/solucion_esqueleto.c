@@ -181,7 +181,11 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {
         segment = next_segment;
     }
     if(segment->planta_data == NULL) {//si no hay planta es decir statuas null
-        //revisar pq las planbtas no estan en malloc 
+        // si no hya planta metemos plant_data en el segmento
+        Planta* new_plant = (Planta*)malloc(sizeof(Planta));
+        //metemos la new plant en el segmento
+        segment->planta_data = new_plant;
+        segment->status = STATUS_PLANTA;
     }
     
     
@@ -194,6 +198,19 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {
 
 void gameBoardRemovePlant(GameBoard* board, int row, int col) {
     // mismo que arriba pero en vez de poner saco 
+    GardenRow* garden_row = &board->rows[row];
+    RowSegment* segment = garden_row->first_segment;
+    for (int i = 0; i = col; i++)
+    {
+        RowSegment* next_segment = segment->next;
+        segment = next_segment;
+    }
+    if(segment->planta_data != NULL) {//si no hay planta es decir statuas null
+        // si no hya planta metemos plant_data en el segmento
+        free(segment->planta_data);//libero la planta
+        segment->planta_data = NULL;
+        segment->status = STATUS_VACIO;
+    }
     // TODO: Similar a AddPlant, encontrar el segmento que contiene `col`.
     // TODO: Si es un segmento de tipo PLANTA, convertirlo a VACIO y liberar el `planta_data`.
     // TODO: Implementar la lógica de FUSIÓN con los segmentos vecinos si también son VACIO.
@@ -202,6 +219,12 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {
 
 void gameBoardAddZombie(GameBoard* board, int row) {
     // TODO: Crear un nuevo ZombieNode con memoria dinámica.
+    GardenRow* garden_row = &board->rows[row];
+    RowSegment* segment = garden_row->first_segment;
+    ZombieNode* new_zombie_node = (ZombieNode*)malloc(sizeof(ZombieNode));
+    new_zombie_node->pos_x = SCREEN_WIDTH;
+    new_zombie_node->zombie_data.row = row;
+    new_zombie_node->zombie_data.activo = 1;
     // TODO: Inicializar sus datos (posición, vida, animación, etc.).
     // TODO: Agregarlo a la lista enlazada simple de la GardenRow correspondiente.
     printf("Función gameBoardAddZombie no implementada.\n");
