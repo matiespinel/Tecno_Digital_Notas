@@ -225,6 +225,9 @@ void gameBoardAddZombie(GameBoard* board, int row) {
     new_zombie_node->pos_x = SCREEN_WIDTH;
     new_zombie_node->zombie_data.row = row;
     new_zombie_node->zombie_data.activo = 1;
+    new_zombie_node->zombie_data.current_frame=0;
+    new_zombie_node->zombie_data.frame_timer=0;
+    new_zombie_node->zombie_data.vida=100;
     // TODO: Inicializar sus datos (posición, vida, animación, etc.).
     // TODO: Agregarlo a la lista enlazada simple de la GardenRow correspondiente.
     printf("Función gameBoardAddZombie no implementada.\n");
