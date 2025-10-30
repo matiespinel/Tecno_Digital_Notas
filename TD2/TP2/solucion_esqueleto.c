@@ -240,7 +240,18 @@ void gameBoardUpdate(GameBoard* board) {
     // TODO: Recorrer las listas de segmentos de cada fila para gestionar los cooldowns y animaciones de las plantas.
     // TODO: Actualizar la lógica de disparo, colisiones y spawn de zombies.
 }
-
+void dispararArveja(GameBoard* board, int row, int col) {//modificada para que use gameboard y las estructuras nuevas
+    for (int i = 0; i < MAX_ARVEJAS; i++) {
+        if (!board->arvejas[i].activo) {
+            board->arvejas[i].rect.x = board->rows[row].segments[col].rect.x + (CELL_WIDTH / 2);
+            board->arvejas[i].rect.y = board->rows[row].segments[col].rect.y + (CELL_HEIGHT / 4);
+            board->arvejas[i].rect.w = 20;
+            board->arvejas[i].rect.h = 20;
+            board->arvejas[i].activo = 1;
+            break;
+        }
+    }
+}
 void gameBoardDraw(GameBoard* board) {
     if (!board) return;
     SDL_RenderClear(renderer);
