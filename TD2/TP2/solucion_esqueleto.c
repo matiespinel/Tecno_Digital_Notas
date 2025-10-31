@@ -177,17 +177,25 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
     RowSegment* segment = garden_row->first_segment;
     for (int i = 0; i < col; i++)
     {
+        RowSegment* anterior = segment;
         RowSegment* next_segment = segment->next;
         segment = next_segment;
     }
+    RowSegment* segmentsig = segment->next;
+    int dato = segment->length;
+    int dato2 = segment->start_col;
     if(segment->planta_data == NULL) {//si no hay planta es decir statuas null
-        // si no hya planta metemos plant_data en el segmento
-        Planta* new_plant = (Planta*)malloc(sizeof(Planta));
-        //metemos la new plant en el segmento
-        segment->planta_data = new_plant;
-        segment->status = STATUS_PLANTA;
+        // si no hay planta la pongo
+        RowSegment* nuevo = (RowSegment*)malloc(sizeof(RowSegment));
+        nuevo->status = STATUS_PLANTA;
+        Planta* nueva_planta = (Planta*)malloc(sizeof(Planta));
+        nuevo->planta_data = nueva_planta;
+        anterior->next = nuevo;
+        nuevo->next = segmentsig;
+        nuevo->length = dato;
+        nuevo->start_col = dato2;
+        free(segment);
     }
-    
     
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
     // TODO: Si se encuentra y tiene espacio, realizar la lógica de DIVISIÓN de segmento. sumar planta al segmento sin que se rompa la linea de segmentos solo se pasa plant data 
@@ -202,16 +210,26 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
     RowSegment* segment = garden_row->first_segment;
     for (int i = 0; i < col; i++)
     {
+        RowSegment* anterior = segment;
         RowSegment* next_segment = segment->next;
         segment = next_segment;
     }
     RowSegment* segmentsig = segment->next;
+    int dato = segment->length;
+    int dato2 = segment->start_col;
     if(segment->planta_data != NULL) {//si hay planta es decir statuas !null
         // si hay planta la saco
-        free(segment->planta_data);//libero la planta
         segment->planta_data = NULL;
         segment->status = STATUS_VACIO;
+        free(segment->planta_data);//libero la planta
     }
+    RowSegment* nuevo = (RowSegment*)malloc(sizeof(RowSegment));
+    nuevo->status = STATUS_VACIO;
+    anterior->next = nuevo;
+    nuevo->next = segmentsig;
+    nuevo->length = dato;
+    nuevo->start_col = dato2;
+    free(segment);
     // TODO: Similar a AddPlant, encontrar el segmento que contiene `col`.
     // TODO: Si es un segmento de tipo PLANTA, convertirlo a VACIO y liberar el `planta_data`.
     // TODO: Implementar la lógica de FUSIÓN con los segmentos vecinos si también son VACIO.
