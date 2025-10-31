@@ -233,6 +233,7 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
     // TODO: Similar a AddPlant, encontrar el segmento que contiene `col`.
     // TODO: Si es un segmento de tipo PLANTA, convertirlo a VACIO y liberar el `planta_data`.
     // TODO: Implementar la lógica de FUSIÓN con los segmentos vecinos si también son VACIO.
+    // sigue la logica de segmentos planteada en la consigna al elminar el segmento e insertando otro nuevo en su lugar. 
     printf("Función gameBoardRemovePlant no implementada.\n");
 }
 
@@ -258,6 +259,70 @@ void gameBoardUpdate(GameBoard* board) {
     // TODO: Recorrer las listas de zombies de cada fila para moverlos y animarlos.
     // TODO: Recorrer las listas de segmentos de cada fila para gestionar los cooldowns y animaciones de las plantas.
     // TODO: Actualizar la lógica de disparo, colisiones y spawn de zombies.
+    // logica vieja 
+    for (int i = 0; i < MAX_ZOMBIES; i++) {
+        if (zombies[i].activo) {
+            Zombie* z = &zombies[i];
+            float distance_per_tick = ZOMBIE_DISTANCE_PER_CYCLE / (float)(ZOMBIE_TOTAL_FRAMES * ZOMBIE_ANIMATION_SPEED);
+            z->pos_x -= distance_per_tick;
+            z->rect.x = (int)z->pos_x;
+            z->frame_timer++;
+            if (z->frame_timer >= ZOMBIE_ANIMATION_SPEED) {
+                z->frame_timer = 0;
+                z->current_frame = (z->current_frame + 1) % ZOMBIE_TOTAL_FRAMES;
+            }
+        }
+    }
+
+    for (int r = 0; r < GRID_ROWS; r++) {
+        for (int c = 0; c < GRID_COLS; c++) {
+            if (grid[r][c].activo) {
+                Planta* p = &grid[r][c];
+                if (p->cooldown <= 0) {
+                    p->debe_disparar = 1;
+                } else {
+                    p->cooldown--;
+                }
+                p->frame_timer++;
+                if (p->frame_timer >= PEASHOOTER_ANIMATION_SPEED) {
+                    p->frame_timer = 0;
+                    p->current_frame = (p->current_frame + 1) % PEASHOOTER_TOTAL_FRAMES;
+                    if (p->debe_disparar && p->current_frame == PEASHOOTER_SHOOT_FRAME) {
+                        dispararArveja(r, c);
+                        p->cooldown = 120;
+                        p->debe_disparar = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < MAX_ARVEJAS; i++) {
+        if (arvejas[i].activo) {
+            arvejas[i].rect.x += PEA_SPEED;
+            if (arvejas[i].rect.x > SCREEN_WIDTH) arvejas[i].activo = 0;
+        }
+    }
+    for (int i = 0; i < MAX_ZOMBIES; i++) {
+        if (!zombies[i].activo) continue;
+        for (int j = 0; j < MAX_ARVEJAS; j++) {
+            if (!arvejas[j].activo) continue;
+            int arveja_row = (arvejas[j].rect.y - GRID_OFFSET_Y) / CELL_HEIGHT;
+            if (zombies[i].row == arveja_row) {
+                if (SDL_HasIntersection(&arvejas[j].rect, &zombies[i].rect)) {
+                    arvejas[j].activo = 0;
+                    zombies[i].vida -= 25;
+                    if (zombies[i].vida <= 0) zombies[i].activo = 0;
+                }
+            }
+        }
+    }
+    // YA ACTUALIZADO EL SPAWN DE ZOMBIES
+    board->zombie_spawn_timer--;
+    if (board->zombie_spawn_timer <= 0) {
+        gameBoardAddZombie(board, rand() % GRID_ROWS);
+        board->zombie_spawn_timer = ZOMBIE_SPAWN_RATE;
+    }
 }
 void dispararArveja(GameBoard* board, int row, int col) {//modificada para que use gameboard y las estructuras nuevas
     for (int i = 0; i < MAX_ARVEJAS; i++) {
