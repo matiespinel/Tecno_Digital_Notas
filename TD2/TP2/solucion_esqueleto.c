@@ -171,11 +171,11 @@ void gameBoardDelete(GameBoard* board) {
     printf("Función gameBoardDelete no implementada.\n");
     }
 }
-int gameBoardAddPlant(GameBoard* board, int row, int col) {
+int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico y crear uno nuevo con la planta
     // TODO: Encontrar la GardenRow correcta.
     GardenRow* garden_row = &board->rows[row];
     RowSegment* segment = garden_row->first_segment;
-    for (int = 0; i = col; i++)
+    for (int i = 0; i < col; i++)
     {
         RowSegment* next_segment = segment->next;
         segment = next_segment;
@@ -196,17 +196,18 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {
     return 0;
 }
 
-void gameBoardRemovePlant(GameBoard* board, int row, int col) {
+void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico con la planta y borrarlo, despues meter uno nuevo.
     // mismo que arriba pero en vez de poner saco 
     GardenRow* garden_row = &board->rows[row];
     RowSegment* segment = garden_row->first_segment;
-    for (int i = 0; i = col; i++)
+    for (int i = 0; i < col; i++)
     {
         RowSegment* next_segment = segment->next;
         segment = next_segment;
     }
-    if(segment->planta_data != NULL) {//si no hay planta es decir statuas null
-        // si no hya planta metemos plant_data en el segmento
+    RowSegment* segmentsig = segment->next;
+    if(segment->planta_data != NULL) {//si hay planta es decir statuas !null
+        // si hay planta la saco
         free(segment->planta_data);//libero la planta
         segment->planta_data = NULL;
         segment->status = STATUS_VACIO;
