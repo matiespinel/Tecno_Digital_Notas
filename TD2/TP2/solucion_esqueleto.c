@@ -138,13 +138,13 @@ void gameBoardDelete(GameBoard* board) {
     // TODO: Recorrer cada GardenRow.
     if (!board) return;// caso base
     for(int i = 0; i < GRID_ROWS; i++) {
-        GardenRow* row = &board->rows[i];
+        GardenRow* row = board->rows[i];
         //hay planta?
             RowSegment* segment = row->first_segment;
             while(segment) {// recorro todos los segmentos de una fila
                 RowSegment* next_segment = segment->next;
                 if(segment->planta_data) {
-                    free(segment->planta_data);//revisar pq las planbtas no estan en malloc 
+                    free(segment->planta_data);
                 }
                 free(segment);
                 segment = next_segment;
@@ -173,28 +173,44 @@ void gameBoardDelete(GameBoard* board) {
 }
 int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico y crear uno nuevo con la planta
     // TODO: Encontrar la GardenRow correcta.
-    GardenRow* garden_row = &board->rows[row];
+    GardenRow* garden_row = board->rows[row];
     RowSegment* segment = garden_row->first_segment;
-    for (int i = 0; i < col; i++)
-    {
-        RowSegment* anterior = segment;
-        RowSegment* next_segment = segment->next;
-        segment = next_segment;
+    RowSegment* plant_segment = (RowSegment*)malloc(sizeof(RowSegment));
+    // se debe buscar dentro de los segmentos cual tiene el espacio para la planta, es decir dentro de start_col cual es el mayor o igual.
+    while (segment) {// recorro todos los segmentos de la fila, si bien al inicio hay uno solo, despues en juego hay mas. 
+        if (segment->start_col <= col && (segment->start_col + segment->length) > col) {// miro si es el mio 
+            //pregunto si el segmento es vacio
+            if (segment->status == STATUS_VACIO) {
+                // Si está vacío, puedo usarlo
+                break;
+            }
+            if (segment->status == STATUS_PLANTA)
+            {
+                // Si ya hay una planta, no puedo colocar otra
+                return 0;
+            }
+        }
+        segment = segment->next;
     }
-    RowSegment* segmentsig = segment->next;
-    int dato = segment->length;
-    int dato2 = segment->start_col;
-    if(segment->planta_data == NULL) {//si no hay planta es decir statuas null
-        // si no hay planta la pongo
-        RowSegment* nuevo = (RowSegment*)malloc(sizeof(RowSegment));
-        nuevo->status = STATUS_PLANTA;
-        Planta* nueva_planta = (Planta*)malloc(sizeof(Planta));
-        nuevo->planta_data = nueva_planta;
-        anterior->next = nuevo;
-        nuevo->next = segmentsig;
-        nuevo->length = dato;
-        nuevo->start_col = dato2;
-        free(segment);
+    // ahora segment tiene el segmento donde esta la columna que necesitamos 
+    plant_segment->next = segment->next;// enlazo el proximo si existe. 
+    segment->next = plant_segment;//puntero al nuevo segmento de planta que creamos
+    plant_segment->start_col = col;
+    plant_segment->status = STATUS_PLANTA;
+    segment->length= col - segment->start_col; // ajusto el largo del segmento viejo
+    plant_segment->length =1; // el nuevo segmento de planta tiene largo 1
+    Planta* nueva_planta = (Planta*)malloc(sizeof(Planta));
+    plant_segment->planta_data = nueva_planta;//paso planta nueva al segmento de planta
+    // ahora vemos si la parte derecha del segmento planta tiene espacio para otro segmento vacio
+    //miro longitud total de la row completa
+    if (plant_segment->next == NULL && (col + 1) < GRID_COLS) {// hay lugar para segmento vacio a la derecha y el segmento planta de por si ya no tiene. 
+        RowSegment* nuevo_segmento_vacio = (RowSegment*)malloc(sizeof(RowSegment));
+        nuevo_segmento_vacio->status = STATUS_VACIO;
+        nuevo_segmento_vacio->start_col = col +1;
+        nuevo_segmento_vacio->length = GRID_COLS - (col +1);
+        nuevo_segmento_vacio->planta_data = NULL;
+        nuevo_segmento_vacio->next = plant_segment->next;
+        plant_segment->next = nuevo_segmento_vacio;// checkear si esto anda bien
     }
     
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
@@ -206,30 +222,60 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
 
 void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico con la planta y borrarlo, despues meter uno nuevo.
     // mismo que arriba pero en vez de poner saco 
+    // TODO: Encontrar la GardenRow correcta.
     GardenRow* garden_row = &board->rows[row];
     RowSegment* segment = garden_row->first_segment;
-    for (int i = 0; i < col; i++)
-    {
-        RowSegment* anterior = segment;
-        RowSegment* next_segment = segment->next;
-        segment = next_segment;
+    RowSegment* prev_segment = NULL;
+    int segmento_anterior = -1;// variable para saber que segmento es el mio 
+    // se debe buscar dentro de los segmentos cual tiene el espacio de la planta, es decir dentro de start_col cual es el mayor o igual.
+    for (int i = 0; i < GRID_COLS; i++) {// recorro todos los segmentos de la fila.
+        if (segment->start_col <= col && (segment->start_col + segment->length) > col) {//miro si es el mio 
+            //pregunto si el segmento es vacio
+            if (segment->status == STATUS_VACIO) {
+                // Si está vacío, no hago nada 
+                return;
+            }
+            if (segment->status == STATUS_PLANTA)
+            {
+                // Si ya hay una planta, no puedo colocar otra
+                break;// lo encontre 
+            }
+        }
+        segment = segment->next;
+        segmento_anterior++;
     }
-    RowSegment* segmentsig = segment->next;
-    int dato = segment->length;
-    int dato2 = segment->start_col;
-    if(segment->planta_data != NULL) {//si hay planta es decir statuas !null
-        // si hay planta la saco
-        segment->planta_data = NULL;
+
+    if (segmento_anterior >= 0) {
+        // Encuentro el segmento anterior al actual
+        prev_segment = garden_row->first_segment;
+        for (int i = 0; i < segmento_anterior; i++) {
+            prev_segment = prev_segment->next;
+        }
+    }
+    // ahora segment tiene el segmento donde esta la columna que necesitamos sacar la planta
+    if (segment->next == NULL) {// si es el ultimo segmento no puedo fusionar a la derecha
         segment->status = STATUS_VACIO;
-        free(segment->planta_data);//libero la planta
+        free(segment->planta_data);
+        segment->planta_data = NULL;
+        prev_segment->length += segment->length;
+        prev_segment->next = NULL;
+        free(segment);
+        //aumentar longitud del anterior segmento y mantener su puntero al siguiente como NULL
+        return;
     }
-    RowSegment* nuevo = (RowSegment*)malloc(sizeof(RowSegment));
-    nuevo->status = STATUS_VACIO;
-    anterior->next = nuevo;
-    nuevo->next = segmentsig;
-    nuevo->length = dato;
-    nuevo->start_col = dato2;
+    // si no es el ultimo segmento puedo fusionar a la derecha
+    prev_segment->length += segment->length;
+    prev_segment->next = segment->next->next;
+    free(segment->planta_data);
+    segment->next = NULL;
     free(segment);
+    if (prev_segment->next->status== STATUS_VACIO) {// si el siguiente tambien es vacio lo fusiono
+        prev_segment->length += prev_segment->next->length;
+        RowSegment* temp = prev_segment->next;
+        prev_segment->next = prev_segment->next->next;
+        free(temp);
+    }
+    return;
     // TODO: Similar a AddPlant, encontrar el segmento que contiene `col`.
     // TODO: Si es un segmento de tipo PLANTA, convertirlo a VACIO y liberar el `planta_data`.
     // TODO: Implementar la lógica de FUSIÓN con los segmentos vecinos si también son VACIO.
@@ -242,7 +288,7 @@ void gameBoardAddZombie(GameBoard* board, int row) {
     GardenRow* garden_row = &board->rows[row];
     RowSegment* segment = garden_row->first_segment;
     ZombieNode* new_zombie_node = (ZombieNode*)malloc(sizeof(ZombieNode));
-    new_zombie_node->pos_x = SCREEN_WIDTH;
+    new_zombie_node->zombie_data.pos_x = SCREEN_WIDTH;
     new_zombie_node->zombie_data.row = row;
     new_zombie_node->zombie_data.activo = 1;
     new_zombie_node->zombie_data.current_frame=0;
@@ -261,16 +307,16 @@ void gameBoardUpdate(GameBoard* board) {
     // TODO: Actualizar la lógica de disparo, colisiones y spawn de zombies.
     // logica vieja 
     for (int r = 0; r < GRID_ROWS; r++) {
-        ZombieNode* zombie = garden_rows[r].first_zombie;
+        ZombieNode* zombie = board->rows[r].first_zombie;
         while (zombie) {
             if (zombie->zombie_data.activo) {
                 float distance_per_tick = ZOMBIE_DISTANCE_PER_CYCLE / (float)(ZOMBIE_TOTAL_FRAMES * ZOMBIE_ANIMATION_SPEED);
-                zombie->pos_x -= distance_per_tick;
-                zombie->rect.x = (int)zombie->pos_x;
-                zombie->frame_timer++;
-                if (zombie->frame_timer >= ZOMBIE_ANIMATION_SPEED) {
-                    zombie->frame_timer = 0;
-                    zombie->current_frame = (zombie->current_frame + 1) % ZOMBIE_TOTAL_FRAMES;
+                zombie->zombie_data.pos_x -= distance_per_tick;
+                zombie->zombie_data.pos_x = (int)zombie->zombie_data.pos_x;
+                zombie->zombie_data.frame_timer++;
+                if (zombie->zombie_data.frame_timer >= ZOMBIE_ANIMATION_SPEED) {
+                    zombie->zombie_data.frame_timer = 0;
+                    zombie->zombie_data.current_frame = (zombie->zombie_data.current_frame + 1) % ZOMBIE_TOTAL_FRAMES;
             }
             }
             zombie = zombie->next;
@@ -282,7 +328,7 @@ void gameBoardUpdate(GameBoard* board) {
         RowSegment* segment = garden_row->first_segment;
         while (segment) {
             if (segment->status) {
-                Planta* p = &segment->planta_data;
+                Planta* p = segment->planta_data;
                 if (p->cooldown <= 0) {
                         p->debe_disparar = 1;
                 } else {
@@ -293,7 +339,7 @@ void gameBoardUpdate(GameBoard* board) {
                     p->frame_timer = 0;
                     p->current_frame = (p->current_frame + 1) % PEASHOOTER_TOTAL_FRAMES;
                     if (p->debe_disparar && p->current_frame == PEASHOOTER_SHOOT_FRAME) {
-                        dispararArveja(r, c);
+                        dispararArveja(board, r, segment->start_col);
                         p->cooldown = 120;
                         p->debe_disparar = 0;
                     }
@@ -314,7 +360,7 @@ void gameBoardUpdate(GameBoard* board) {
             if (!board->arvejas[j].activo) continue;
             int arveja_row = (board->arvejas[j].rect.y - GRID_OFFSET_Y) / CELL_HEIGHT;
             if (board->rows[i].first_zombie->zombie_data.row == arveja_row) {
-                if (SDL_HasIntersection(&board->arvejas[j].rect, &board->rows[i].first_zombie->rect)) {// verificar si es suficiente preguntar el primero de la lista de zombies 
+                if (SDL_HasIntersection(&board->arvejas[j].rect, &board->rows[i].first_zombie->zombie_data.rect)) {// verificar si es suficiente preguntar el primero de la lista de zombies
                     board->arvejas[j].activo = 0;
                     board->rows[i].first_zombie->zombie_data.vida -= 25;
                     if (board->rows[i].first_zombie->zombie_data.vida <= 0) board->rows[i].first_zombie->zombie_data.activo = 0;
@@ -331,9 +377,17 @@ void gameBoardUpdate(GameBoard* board) {
 }
 void dispararArveja(GameBoard* board, int row, int col) {//modificada para que use gameboard y las estructuras nuevas, la logica es la misma que en el base nada mas adaptada a las nuevas estructuras de datos. 
     for (int i = 0; i < MAX_ARVEJAS; i++) {
-        if (!board->arvejas[i].activo) {
-            board->arvejas[i].rect.x = board->rows[row].segments[col].rect.x + (CELL_WIDTH / 2);
-            board->arvejas[i].rect.y = board->rows[row].segments[col].rect.y + (CELL_HEIGHT / 4);
+        if (!board->arvejas[i].activo) {// check si el ! hace falta.
+            RowSegment* segment = board->rows[row].first_segment;
+            while (segment)
+            {
+                if (segment->status == STATUS_PLANTA && segment->start_col == col) {
+                    break;
+                }
+                segment = segment->next;
+            }// ahora ya tengo mi segmento planta a dispatar. 
+            board->arvejas[i].rect.x = segment->planta_data->rect.x + (CELL_WIDTH / 2);//tengo que calcular la posicion x e y de la arveja en base a la planta que dispara, por ende tengo que encontrar el segmento correspondiente a esa planta, dentro de la lista enlazada de segmentos de la fila row
+            board->arvejas[i].rect.y = segment->planta_data->rect.y + (CELL_HEIGHT / 4);
             board->arvejas[i].rect.w = 20;
             board->arvejas[i].rect.h = 20;
             board->arvejas[i].activo = 1;
@@ -358,7 +412,7 @@ void gameBoardDraw(GameBoard* board) { // la estructura de dibujar fue modificad
         RowSegment* segment = garden_row->first_segment;
         while (segment) {
             if (segment->status) {// el status es indicador de planta como se decia en la consigna que si este es = 1 hay planta
-                Planta* p = &segment->planta_data;
+                Planta* p = segment->planta_data;
                 SDL_Rect src_rect = { p->current_frame * PEASHOOTER_FRAME_WIDTH, 0, PEASHOOTER_FRAME_WIDTH, PEASHOOTER_FRAME_HEIGHT };
                 SDL_RenderCopy(renderer, tex_peashooter_sheet, &src_rect, &p->rect);
             }
@@ -370,11 +424,11 @@ void gameBoardDraw(GameBoard* board) { // la estructura de dibujar fue modificad
     }
     for (int r = 0; r < GRID_ROWS; r++) {// recorro todas las filas y miro sus listas de zombies
         GardenRow* garden_row = &board->rows[r];
-        Zombie* z = garden_row->first_zombie;
+        ZombieNode* z = garden_row->first_zombie;
         while (z) {
-            if (z->activo) {
-                SDL_Rect src_rect = { z->current_frame * ZOMBIE_FRAME_WIDTH, 0, ZOMBIE_FRAME_WIDTH, ZOMBIE_FRAME_HEIGHT };
-                SDL_RenderCopy(renderer, tex_zombie_sheet, &src_rect, &z->rect);
+            if (z->zombie_data.activo) {
+                SDL_Rect src_rect = { z->zombie_data.current_frame * ZOMBIE_FRAME_WIDTH, 0, ZOMBIE_FRAME_WIDTH, ZOMBIE_FRAME_HEIGHT };
+                SDL_RenderCopy(renderer, tex_zombie_sheet, &src_rect, &z->zombie_data.rect);
             }
             z = z->next;
         }
@@ -419,7 +473,7 @@ void cerrar() {
 }
 
 
-int main(int argc, char* args[]) {
+int main(int argc, char* args[]) {// sumo game board como parametro porque lo necesito para ver cuando termino.
     srand(time(NULL));
     if (!inicializar()) return 1;
 
@@ -450,7 +504,7 @@ int main(int argc, char* args[]) {
 
         // TODO: Agregar la lógica para ver si un zombie llegó a la casa y terminó el juego
         for(int i = 0; i < GRID_ROWS; i++) {
-            GardenRow* row = &board->rows[i];
+            GardenRow* row = &game_board->rows[i];
             ZombieNode* znode = row->first_zombie;
             while (znode) {//cuando sea NULL termina
                 ZombieNode* next_z = znode->next;//avanzo 

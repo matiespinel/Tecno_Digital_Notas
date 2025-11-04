@@ -17,5 +17,7 @@
         "Mmeoria_Var.C": "cpp",
         "Listas.C": "cpp",
         "Ejercicio1.C": "cpp"
-    }
+    },
+    "editor.formatOnSave": false,
+    "editor.formatOnSaveMode": "modificationsIfAvailable"
 }
