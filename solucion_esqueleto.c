@@ -189,7 +189,7 @@ void gameBoardDelete(GameBoard* board) {
     // TODO: Recorrer cada GardenRow.
     if (!board) return;// caso base
     for(int i = 0; i < GRID_ROWS; i++) {
-        GardenRow* row = board->rows[i];
+        GardenRow* row = &board->rows[i];
         //hay planta?
             RowSegment* segment = row->first_segment;
             while(segment) {// recorro todos los segmentos de una fila
@@ -201,11 +201,7 @@ void gameBoardDelete(GameBoard* board) {
                 segment = next_segment;
             }
 
-    // Recorremos todas las filas del jardín
-    
-        GardenRow* row = &board->rows[i];
-
-        // 1️⃣ Liberar todos los zombies de la fila
+        //  Liberar todos los zombies de la fila
         ZombieNode* znode = row->first_zombie;
         while (znode) {//cuando sea NULL termina
             ZombieNode* next_z = znode->next;//avanzo 
@@ -216,15 +212,15 @@ void gameBoardDelete(GameBoard* board) {
 
     // TODO: Liberar todos los RowSegment (y los planta_data si existen).
     // TODO: Liberar todos los ZombieNode.
-
+    }
     free(board);
     // TODO: Finalmente, liberar el GameBoard.
     printf("Función gameBoardDelete no implementada.\n");
-    }
+    
 }
 int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico y crear uno nuevo con la planta
     // TODO: Encontrar la GardenRow correcta.
-    GardenRow* garden_row = board->rows[row];
+    GardenRow* garden_row = &board->rows[row];
     RowSegment* segment = garden_row->first_segment;
     RowSegment* plant_segment = (RowSegment*)malloc(sizeof(RowSegment));
     // se debe buscar dentro de los segmentos cual tiene el espacio para la planta, es decir dentro de start_col cual es el mayor o igual.
@@ -238,6 +234,7 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
             if (segment->status == STATUS_PLANTA)
             {
                 // Si ya hay una planta, no puedo colocar otra
+                printf("No se puede agregar planta en fila %d, columna %d: ya hay una planta.\n", row, col);
                 return 0;
             }
         }
@@ -263,11 +260,13 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
         nuevo_segmento_vacio->next = plant_segment->next;
         plant_segment->next = nuevo_segmento_vacio;// checkear si esto anda bien
     }
+    //prints de que todo anda bien
+    printf("Planta agregada en fila %d, columna %d.\n", plant_segment->start_col, row);
     
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
     // TODO: Si se encuentra y tiene espacio, realizar la lógica de DIVISIÓN de segmento. sumar planta al segmento sin que se rompa la linea de segmentos solo se pasa plant data 
     // TODO: Crear la nueva `Planta` con memoria dinámica y asignarla al `planta_data` del nuevo segmento.
-    printf("Función gameBoardAddPlant no implementada.\n");
+
     return 0;
 }
 
@@ -288,7 +287,6 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
             }
             if (segment->status == STATUS_PLANTA)
             {
-                // Si ya hay una planta, no puedo colocar otra
                 break;// lo encontre 
             }
         }
@@ -347,7 +345,28 @@ void gameBoardAddZombie(GameBoard* board, int row) {
     new_zombie_node->zombie_data.vida=100;
     // TODO: Inicializar sus datos (posición, vida, animación, etc.).
     // TODO: Agregarlo a la lista enlazada simple de la GardenRow correspondiente.
-    printf("Función gameBoardAddZombie no implementada.\n");
+    printf("zombie.\n");
+}
+void dispararArveja(GameBoard* board, int row, int col) {//modificada para que use gameboard y las estructuras nuevas, la logica es la misma que en el base nada mas adaptada a las nuevas estructuras de datos. 
+    for (int i = 0; i < MAX_ARVEJAS; i++) {
+        if (!board->arvejas[i].activo) {// check si el ! hace falta.
+            RowSegment* segment = board->rows[row].first_segment;
+            while (segment)
+            {
+                if (segment->status == STATUS_PLANTA && segment->start_col == col) {
+                    break;
+                }
+                segment = segment->next;
+            }// ahora ya tengo mi segmento planta a disparar.
+            board->arvejas[i].rect.x = segment->planta_data->rect.x + (CELL_WIDTH / 2);//tengo que calcular la posicion x e y de la arveja en base a la planta que dispara, por ende tengo que encontrar el segmento correspondiente a esa planta, dentro de la lista enlazada de segmentos de la fila row
+            board->arvejas[i].rect.y = segment->planta_data->rect.y + (CELL_HEIGHT / 4);
+            board->arvejas[i].rect.w = 20;
+            board->arvejas[i].rect.h = 20;
+            board->arvejas[i].activo = 1;
+            break;
+        }
+    }
+    return;
 }
 
 void gameBoardUpdate(GameBoard* board) {
@@ -359,6 +378,7 @@ void gameBoardUpdate(GameBoard* board) {
     // logica vieja 
     for (int r = 0; r < GRID_ROWS; r++) {
         ZombieNode* zombie = board->rows[r].first_zombie;
+        if (zombie == NULL) continue; // estoy en una fila sin zombies entonces no se mira (error detectado por valgrind)
         while (zombie) {
             if (zombie->zombie_data.activo) {
                 float distance_per_tick = ZOMBIE_DISTANCE_PER_CYCLE / (float)(ZOMBIE_TOTAL_FRAMES * ZOMBIE_ANIMATION_SPEED);
@@ -396,6 +416,7 @@ void gameBoardUpdate(GameBoard* board) {
                     }
                 }
             }
+            segment = segment->next;
         }
     }
 
@@ -424,26 +445,6 @@ void gameBoardUpdate(GameBoard* board) {
     if (board->zombie_spawn_timer <= 0) {
         gameBoardAddZombie(board, rand() % GRID_ROWS);
         board->zombie_spawn_timer = ZOMBIE_SPAWN_RATE;
-    }
-}
-void dispararArveja(GameBoard* board, int row, int col) {//modificada para que use gameboard y las estructuras nuevas, la logica es la misma que en el base nada mas adaptada a las nuevas estructuras de datos. 
-    for (int i = 0; i < MAX_ARVEJAS; i++) {
-        if (!board->arvejas[i].activo) {// check si el ! hace falta.
-            RowSegment* segment = board->rows[row].first_segment;
-            while (segment)
-            {
-                if (segment->status == STATUS_PLANTA && segment->start_col == col) {
-                    break;
-                }
-                segment = segment->next;
-            }// ahora ya tengo mi segmento planta a dispatar. 
-            board->arvejas[i].rect.x = segment->planta_data->rect.x + (CELL_WIDTH / 2);//tengo que calcular la posicion x e y de la arveja en base a la planta que dispara, por ende tengo que encontrar el segmento correspondiente a esa planta, dentro de la lista enlazada de segmentos de la fila row
-            board->arvejas[i].rect.y = segment->planta_data->rect.y + (CELL_HEIGHT / 4);
-            board->arvejas[i].rect.w = 20;
-            board->arvejas[i].rect.h = 20;
-            board->arvejas[i].activo = 1;
-            break;
-        }
     }
 }
 void gameBoardDraw(GameBoard* board) { // la estructura de dibujar fue modificada nada mes en los accesos a las plantas y demas, la logica de dibujo es la misma que la proporcionada en el juego base.
@@ -640,5 +641,38 @@ int main(int argc, char* args[]) {// sumo game board como parametro porque lo ne
     char* cincoY = "FGHIJ";
     char* resultadoConcat4 = strConcatenate(strDuplicate(cincoX), strDuplicate(cincoY));
     printf("Concatenacion de '%s' y '%s': %s\n", cincoX, cincoY, resultadoConcat4);
+    // =========================== TEST EJERCICOS DE GAMEBOARD ===========================
+    //====================gameBoardAddPlant====================:
+    //1. Agregar una planta en una fila vac ́ıa. Agregar tanto en el medio como en los extremos.
+    gameBoardAddPlant(game_board, 2, 4); // Medio
+    gameBoardAddPlant(game_board, 0, 0); // Extremo izquierdo
+    gameBoardAddPlant(game_board, 4, 8); // Extremo derecho
+    //2. Llenar una fila completa de plantas.
+    for (int col = 0; col < GRID_COLS; col++) {
+        gameBoardAddPlant(game_board, 1, col);
+    }
+    //3. Intentar agregar una planta en una celda ya ocupada.
+    gameBoardAddPlant(game_board, 2, 4); // Ya ocupada
+    //===================gameBoardRemovePlant=========================:
+    //1. Plantar en las columnas 3, 4 y 5. Sacar la planta de la columna 4.
+    gameBoardAddPlant(game_board, 3, 3);
+    gameBoardAddPlant(game_board, 3, 4);
+    gameBoardAddPlant(game_board, 3, 5);
+    gameBoardRemovePlant(game_board, 3, 4);
+    //2. Siguiendo el caso anterior, sacar luego la planta en la columna 3.
+    gameBoardRemovePlant(game_board, 3, 3);
+    //3. Llenar una fila de plantas. Sacar una del medio.
+    gameBoardRemovePlant(game_board, 1, 4);
+    //gameBoardAddZombie:
+    //1. Tomar una lista de 3 zombies y agregarle uno m ́as.
+    gameBoardAddZombie(game_board, 0);
+    gameBoardAddZombie(game_board, 0);
+    gameBoardAddZombie(game_board, 0);
+    gameBoardAddZombie(game_board, 0);
+    //2. Crear una lista de 10000 zombies.
+    for (int i = 0; i < 10000; i++) {
+        gameBoardAddZombie(game_board, rand() % GRID_ROWS);
+    }
+
     return 0;
 }
