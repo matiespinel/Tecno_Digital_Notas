@@ -3,6 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+//=========================== respuestas A preguntas sobre el uso de IA ===============================
+//Utilizando cualquier herramienta de inteligencia artificial, ya sea Gemini, Copilot, ChatGPT, Claude o LLaMa, responder las siguientes preguntas:
+//=============Indique el porcentaje aproximado de líneas de código del trabajo práctico que fueron realizadas con asistencia de una IA.===========
+// 10% de las lineas del trabajo practico fueron realizadas o modificadas por una IA
+//============¿Cómo verificaron que las sugerencias de la IA eran correctas?============
+// Principalmente poniendolas a prueba o desglosandolas paso por paso para ver el razonamiento detras de la respuesta. Tambien usando el compilador y valgrind por si tiraban algun error o warning.
+//==============¿Se enfrentaron a alguna dificultad al utilizar las herramientas de IA? ¿Como las resolvieron?==============
+// Ninguna en particular, las herraientos fueron mas que nada usadas para poder testear las cosas. (como usar valgrind y entender los warnings que tiraba)
+//==================¿Consideran que el uso de la IA les ha permitido desarrollar habilidades de programación en C? ¿Por qué?===============
+// No consideramos que la IA haya jugado un rol muy importante en la capacida de desarrollo de habilidades en C, sino que mas bien las desarrollamos a medida que avanzabamos con el trbaajo practico y las clases.
+
 // ===========ejericio 1 ==========
 //funciones 
 char* strDuplicate(char* src){
