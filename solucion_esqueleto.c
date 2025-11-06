@@ -272,7 +272,14 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
         plant_segment->next = nuevo_segmento_vacio;// checkear si esto anda bien
     }
     //prints de que todo anda bien
-    printf("Planta agregada en fila %d, columna %d.\n", plant_segment->start_col, row);
+    printf("Planta agregada en fila %d, columna %d.\n", row, plant_segment->start_col);
+    printf("Longitud segmento planta: %d\n", plant_segment->length);
+    //resto de los segmentos de la fila de la planta recien agregada:
+    RowSegment* temp = garden_row->first_segment;
+    while(temp) {
+        printf("Segmento siguiente - start_col: %d, length: %d, status: %d\n", temp->start_col, temp->length, temp->status);
+        temp = temp->next;
+    }
     
     // TODO: Recorrer la lista de RowSegment hasta encontrar el segmento VACIO que contenga a `col`.
     // TODO: Si se encuentra y tiene espacio, realizar la lógica de DIVISIÓN de segmento. sumar planta al segmento sin que se rompa la linea de segmentos solo se pasa plant data 
@@ -298,6 +305,7 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
             }
             if (segment->status == STATUS_PLANTA)
             {
+                printf("Planta lista para sacar. \n");
                 break;// lo encontre 
             }
         }
@@ -327,6 +335,8 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
     prev_segment->length += segment->length;
     prev_segment->next = segment->next->next;
     free(segment->planta_data);
+    printf("%d\n", prev_segment->length);
+    printf("Planta removida en fila %d, columna %d.\n", segment->start_col, row);
     segment->next = NULL;
     free(segment);
     if (prev_segment->next->status== STATUS_VACIO) {// si el siguiente tambien es vacio lo fusiono
@@ -340,7 +350,6 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
     // TODO: Si es un segmento de tipo PLANTA, convertirlo a VACIO y liberar el `planta_data`.
     // TODO: Implementar la lógica de FUSIÓN con los segmentos vecinos si también son VACIO.
     // sigue la logica de segmentos planteada en la consigna al elminar el segmento e insertando otro nuevo en su lugar. 
-    printf("Función gameBoardRemovePlant no implementada.\n");
 }
 
 void gameBoardAddZombie(GameBoard* board, int row) {
