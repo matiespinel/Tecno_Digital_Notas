@@ -94,7 +94,7 @@ char* strConcatenate(char* src1, char* src2){
 
 #define MAX_ARVEJAS 100
 #define PEA_SPEED 5
-#define ZOMBIE_SPAWN_RATE 300
+#define ZOMBIE_SPAWN_RATE 1
 
 
 // ========= ESTRUCTURAS DE DATOS =========
@@ -226,7 +226,6 @@ void gameBoardDelete(GameBoard* board) {
     }
     free(board);
     // TODO: Finalmente, liberar el GameBoard.
-    printf("Función gameBoardDelete no implementada.\n");
     
 }
 int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico y crear uno nuevo con la planta
@@ -259,6 +258,15 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
     segment->length= col - segment->start_col; // ajusto el largo del segmento viejo
     plant_segment->length =1; // el nuevo segmento de planta tiene largo 1
     Planta* nueva_planta = (Planta*)malloc(sizeof(Planta));
+    nueva_planta->cooldown = 0;
+    nueva_planta->current_frame = 0;
+    nueva_planta->frame_timer = 0;
+    nueva_planta->debe_disparar = 0;
+    nueva_planta->activo = 1;
+    nueva_planta->rect.x = GRID_OFFSET_X + (col * CELL_WIDTH);
+    nueva_planta->rect.y = GRID_OFFSET_Y + (row * CELL_HEIGHT);
+    nueva_planta->rect.w = CELL_WIDTH;
+    nueva_planta->rect.h = CELL_HEIGHT;
     plant_segment->planta_data = nueva_planta;//paso planta nueva al segmento de planta
     // ahora vemos si la parte derecha del segmento planta tiene espacio para otro segmento vacio
     //miro longitud total de la row completa
@@ -288,7 +296,7 @@ int gameBoardAddPlant(GameBoard* board, int row, int col) {// MODIFICAR porque y
     return 0;
 }
 
-void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porque yo paso planta y no segmento, tengo que borrar el segmento especifico con la planta y borrarlo, despues meter uno nuevo.
+void gameBoardRemovePlant(GameBoard* board, int row, int col) {
     // mismo que arriba pero en vez de poner saco 
     // TODO: Encontrar la GardenRow correcta.
     GardenRow* garden_row = &board->rows[row];
@@ -336,7 +344,7 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
     prev_segment->next = segment->next->next;
     free(segment->planta_data);
     printf("%d\n", prev_segment->length);
-    printf("Planta removida en fila %d, columna %d.\n", segment->start_col, row);
+    printf("Planta sacada en fila %d, columna %d.\n", segment->start_col, row);
     segment->next = NULL;
     free(segment);
     if (prev_segment->next->status== STATUS_VACIO) {// si el siguiente tambien es vacio lo fusiono
@@ -355,14 +363,28 @@ void gameBoardRemovePlant(GameBoard* board, int row, int col) {//MODIFICAR porqu
 void gameBoardAddZombie(GameBoard* board, int row) {
     // TODO: Crear un nuevo ZombieNode con memoria dinámica.
     GardenRow* garden_row = &board->rows[row];
-    RowSegment* segment = garden_row->first_segment;
     ZombieNode* new_zombie_node = (ZombieNode*)malloc(sizeof(ZombieNode));
     new_zombie_node->zombie_data.pos_x = SCREEN_WIDTH;
     new_zombie_node->zombie_data.row = row;
+    new_zombie_node->zombie_data.rect.x = (int)new_zombie_node->zombie_data.pos_x;
+    new_zombie_node->zombie_data.rect.y = GRID_OFFSET_Y + (new_zombie_node->zombie_data.row * CELL_HEIGHT);
+    new_zombie_node->zombie_data.rect.w = CELL_WIDTH;
+    new_zombie_node->zombie_data.rect.h = CELL_HEIGHT;
+    new_zombie_node->zombie_data.vida = 100;
     new_zombie_node->zombie_data.activo = 1;
-    new_zombie_node->zombie_data.current_frame=0;
-    new_zombie_node->zombie_data.frame_timer=0;
-    new_zombie_node->zombie_data.vida=100;
+    new_zombie_node->zombie_data.current_frame = 0;
+    new_zombie_node->zombie_data.frame_timer = 0;
+    if (!garden_row->first_zombie) {
+        garden_row->first_zombie = new_zombie_node;
+        new_zombie_node->next = NULL;
+    } else {
+        ZombieNode* temp = garden_row->first_zombie;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = new_zombie_node;
+        new_zombie_node->next = NULL;
+    }
     // TODO: Inicializar sus datos (posición, vida, animación, etc.).
     // TODO: Agregarlo a la lista enlazada simple de la GardenRow correspondiente.
     printf("zombie.\n");
@@ -388,43 +410,67 @@ void dispararArveja(GameBoard* board, int row, int col) {//modificada para que u
     }
     return;
 }
+void borrarZombieNode(GameBoard* board, int row, ZombieNode* target) {
+    GardenRow* garden_row = &board->rows[row];
+    ZombieNode* current = garden_row->first_zombie;
+    ZombieNode* prev = NULL;
 
+    while (current) {
+        if (current == target) {
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                garden_row->first_zombie = current->next;
+            }
+            free(current);
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+}
 void gameBoardUpdate(GameBoard* board) {
-    if (!board) return;
-    // TODO: Re-implementar la lógica de `actualizarEstado` usando las nuevas estructuras.
-    // TODO: Recorrer las listas de zombies de cada fila para moverlos y animarlos.
-    // TODO: Recorrer las listas de segmentos de cada fila para gestionar los cooldowns y animaciones de las plantas.
-    // TODO: Actualizar la lógica de disparo, colisiones y spawn de zombies.
-    // logica vieja 
+    if (!board) {
+        printf("gameBoardUpdate: board == NULL\n");
+        return;
+    }
+    // recorrer cada lista de zombies
     for (int r = 0; r < GRID_ROWS; r++) {
-        ZombieNode* zombie = board->rows[r].first_zombie;
-        if (zombie == NULL) continue; // estoy en una fila sin zombies entonces no se mira (error detectado por valgrind)
-        while (zombie) {
-            if (zombie->zombie_data.activo) {
+        ZombieNode* znode = board->rows[r].first_zombie;
+        while (znode) {
+            if (znode->zombie_data.activo) {
                 float distance_per_tick = ZOMBIE_DISTANCE_PER_CYCLE / (float)(ZOMBIE_TOTAL_FRAMES * ZOMBIE_ANIMATION_SPEED);
-                zombie->zombie_data.pos_x -= distance_per_tick;
-                zombie->zombie_data.pos_x = (int)zombie->zombie_data.pos_x;
-                zombie->zombie_data.frame_timer++;
-                if (zombie->zombie_data.frame_timer >= ZOMBIE_ANIMATION_SPEED) {
-                    zombie->zombie_data.frame_timer = 0;
-                    zombie->zombie_data.current_frame = (zombie->zombie_data.current_frame + 1) % ZOMBIE_TOTAL_FRAMES;
+                znode->zombie_data.pos_x -= distance_per_tick;
+                znode->zombie_data.rect.x = (int)znode->zombie_data.pos_x; 
+                znode->zombie_data.frame_timer++;
+                if (znode->zombie_data.frame_timer >= ZOMBIE_ANIMATION_SPEED) {
+                    znode->zombie_data.frame_timer = 0;
+                    znode->zombie_data.current_frame = (znode->zombie_data.current_frame + 1) % ZOMBIE_TOTAL_FRAMES;
+                }
             }
-            }
-            zombie = zombie->next;
+            znode = znode->next;
         }
     }
 
-    for (int r = 0; r < GRID_ROWS; r++) {// recorro todas las filas y columnas buscando plantas y actualizandolas
-        GardenRow* garden_row = &board->rows[r]; 
+    // Actualizar plantas y decidir disparo: recorrer segmentos de cada fila
+    for (int r = 0; r < GRID_ROWS; r++) {
+        GardenRow* garden_row = &board->rows[r];
         RowSegment* segment = garden_row->first_segment;
         while (segment) {
-            if (segment->status) {
+            if (segment->status == STATUS_PLANTA && segment->planta_data) {
                 Planta* p = segment->planta_data;
+                // Asegurarse de que los campos están inicializados; si no, inicializarlos con valores por defecto (evito errores)
+                if (p->cooldown < 0){p->cooldown = 0;} 
+                if (p->current_frame < 0 || p->current_frame >= PEASHOOTER_TOTAL_FRAMES) {p->current_frame = 0;}
+                if (p->frame_timer < 0) {p->frame_timer = 0;}
+                if (p->debe_disparar != 0 && p->debe_disparar != 1) {p->debe_disparar = 0;}
+
                 if (p->cooldown <= 0) {
-                        p->debe_disparar = 1;
+                    p->debe_disparar = 1;
                 } else {
                     p->cooldown--;
                 }
+
                 p->frame_timer++;
                 if (p->frame_timer >= PEASHOOTER_ANIMATION_SPEED) {
                     p->frame_timer = 0;
@@ -440,51 +486,81 @@ void gameBoardUpdate(GameBoard* board) {
         }
     }
 
+    // Mover arvejas
     for (int i = 0; i < MAX_ARVEJAS; i++) {
         if (board->arvejas[i].activo) {
             board->arvejas[i].rect.x += PEA_SPEED;
             if (board->arvejas[i].rect.x > SCREEN_WIDTH) board->arvejas[i].activo = 0;
         }
     }
-    for (int i = 0; i < GRID_ROWS; i++) {//modificada para que use gameboard y las estructuras nuevas, la logica es la misma que en el base nada mas adaptada a las nuevas estructuras de datos.
-        if (!board->rows[i].first_zombie->zombie_data.activo) continue;
-        for (int j = 0; j < MAX_ARVEJAS; j++) {
-            if (!board->arvejas[j].activo) continue;
-            int arveja_row = (board->arvejas[j].rect.y - GRID_OFFSET_Y) / CELL_HEIGHT;
-            if (board->rows[i].first_zombie->zombie_data.row == arveja_row) {
-                if (SDL_HasIntersection(&board->arvejas[j].rect, &board->rows[i].first_zombie->zombie_data.rect)) {// verificar si es suficiente preguntar el primero de la lista de zombies
-                    board->arvejas[j].activo = 0;
-                    board->rows[i].first_zombie->zombie_data.vida -= 25;
-                    if (board->rows[i].first_zombie->zombie_data.vida <= 0) board->rows[i].first_zombie->zombie_data.activo = 0;
+
+    // Colisiones entre arvejas y los zombies (recorremos cada lista de zombies)
+    for (int r = 0; r < GRID_ROWS; r++) {
+        ZombieNode* znode = board->rows[r].first_zombie;
+        while (znode) {
+            if (znode->zombie_data.activo) {
+                for (int j = 0; j < MAX_ARVEJAS; j++) {
+                    if (!board->arvejas[j].activo) continue;// si no esta activa sigo
+                    int arveja_row = (board->arvejas[j].rect.y - GRID_OFFSET_Y) / CELL_HEIGHT;
+                    if (arveja_row < 0 || arveja_row >= GRID_ROWS) continue;
+                    // solo chequeamos arvejas que estén en la misma fila
+                    if (arveja_row != znode->zombie_data.row) continue;
+                    if (SDL_HasIntersection(&board->arvejas[j].rect, &znode->zombie_data.rect)) {
+                        board->arvejas[j].activo = 0;
+                        znode->zombie_data.vida -= 25;
+                        if (znode->zombie_data.vida <= 0) {
+                            // borrar nodo zombie
+                            znode->zombie_data.activo = 0;
+                        }
+                    }
                 }
+            }
+            znode = znode->next;
+
+        }
+        // ahora limpio los zombies inactivos de la lista
+        ZombieNode* current = board->rows[r].first_zombie;
+        while (current) {
+            if (!current->zombie_data.activo) {
+                ZombieNode* to_delete = current;
+                current = current->next;
+                borrarZombieNode(board, r, to_delete); // se entiende por como funciona la logica de segmentos de zobies y plantas que al morir un zombie se borra su nodo
+            } else {
+                current = current->next;
             }
         }
     }
-    // YA ACTUALIZADO EL SPAWN DE ZOMBIES
+
+    // 5) Spawn de zombies
     board->zombie_spawn_timer--;
     if (board->zombie_spawn_timer <= 0) {
+        gameBoardAddZombie(board, rand() % GRID_ROWS);
         gameBoardAddZombie(board, rand() % GRID_ROWS);
         board->zombie_spawn_timer = ZOMBIE_SPAWN_RATE;
     }
 }
+
 void gameBoardDraw(GameBoard* board) { // la estructura de dibujar fue modificada nada mes en los accesos a las plantas y demas, la logica de dibujo es la misma que la proporcionada en el juego base.
     if (!board) return;
+    if (!renderer) {
+        printf(" Renderer no inicializado en gameBoardDraw\n");
+        return;
+    }
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, tex_background, NULL, NULL);
 
     // TODO: Re-implementar la lógica de `dibujar` usando las nuevas estructuras.
     // TODO: Recorrer las listas de segmentos para dibujar las plantas.
     // TODO: Recorrer las listas de zombies para dibujarlos.
-    // TODO: Dibujar las arvejas y el cursor.
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, tex_background, NULL, NULL);
+    // TODO: Dibujar las arvejas y el cursor.;
 
     for (int r = 0; r < GRID_ROWS; r++) {// recorro todas las filas y columnas buscando plantas y actualizandolas
         GardenRow* garden_row = &board->rows[r]; 
         RowSegment* segment = garden_row->first_segment;
         while (segment) {
-            if (segment->status) {// el status es indicador de planta como se decia en la consigna que si este es = 1 hay planta
+            if (segment->planta_data) {// el status es indicador de planta como se decia en la consigna que si este es = 1 hay planta
                 Planta* p = segment->planta_data;
+                printf("Dibujando planta en fila %d, columna %d\n", r, segment->start_col);
                 SDL_Rect src_rect = { p->current_frame * PEASHOOTER_FRAME_WIDTH, 0, PEASHOOTER_FRAME_WIDTH, PEASHOOTER_FRAME_HEIGHT };
                 SDL_RenderCopy(renderer, tex_peashooter_sheet, &src_rect, &p->rect);
             }
@@ -493,14 +569,18 @@ void gameBoardDraw(GameBoard* board) { // la estructura de dibujar fue modificad
     }
     for (int i = 0; i < MAX_ARVEJAS; i++) {// arvejas 
         if (board->arvejas[i].activo) SDL_RenderCopy(renderer, tex_pea, NULL, &board->arvejas[i].rect);
+        //printf("Dibujando arveja %d\n", i);
     }
     for (int r = 0; r < GRID_ROWS; r++) {// recorro todas las filas y miro sus listas de zombies
         GardenRow* garden_row = &board->rows[r];
         ZombieNode* z = garden_row->first_zombie;
         while (z) {
             if (z->zombie_data.activo) {
+                printf("Dibujando zombie en fila %d\n", r);
                 SDL_Rect src_rect = { z->zombie_data.current_frame * ZOMBIE_FRAME_WIDTH, 0, ZOMBIE_FRAME_WIDTH, ZOMBIE_FRAME_HEIGHT };
+                printf("Dibujando zombie en filasdfghj %d\n", r);
                 SDL_RenderCopy(renderer, tex_zombie_sheet, &src_rect, &z->zombie_data.rect);
+                printf("Dibujando zombie en filasergh %d\n", r);
             }
             z = z->next;
         }
@@ -512,7 +592,6 @@ void gameBoardDraw(GameBoard* board) { // la estructura de dibujar fue modificad
 
     SDL_RenderPresent(renderer);
 
-    SDL_RenderPresent(renderer);
 }
 
 SDL_Texture* cargarTextura(const char* path) {
@@ -531,6 +610,29 @@ int inicializar() {
     tex_peashooter_sheet = cargarTextura("res/peashooter_sprite_sheet.png");
     tex_zombie_sheet = cargarTextura("res/zombie_sprite_sheet.png");
     tex_pea = cargarTextura("res/pea.png");
+    printf("=== Verificando texturas cargadas ===\n");
+    if (!tex_background)
+        printf(" tex_background nula: %s\n", IMG_GetError());
+    else
+        printf(" tex_background cargada correctamente\n");
+
+    if (!tex_peashooter_sheet)
+        printf(" tex_peashooter_sheet nula: %s\n", IMG_GetError());
+    else
+        printf(" tex_peashooter_sheet cargada correctamente\n");
+
+    if (!tex_zombie_sheet)
+        printf(" tex_zombie_sheet nula: %s\n", IMG_GetError());
+    else
+        printf(" tex_zombie_sheet cargada correctamente\n");
+
+    if (!tex_pea)
+        printf(" tex_pea nula: %s\n", IMG_GetError());
+    else
+        printf(" tex_pea cargada correctamente\n");
+
+    printf("=====================================\n");
+
     return 1;
 }
 void cerrar() {
@@ -546,10 +648,17 @@ void cerrar() {
 
 
 int main(int argc, char* args[]) {// sumo game board como parametro porque lo necesito para ver cuando termino.
+    setbuf(stdout, NULL);
+    printf("Inicio del programa\n");
     srand(time(NULL));
-    if (!inicializar()) return 1;
-
+    if (!inicializar()){
+        printf(" Error al inicializar SDL o texturas\n");//prueba de carga 
+        return 1;
+    }
+    printf("SDL y texturas inicializadas correctamente\n");// anda
+    printf("Antes de gameBoardInit\n");//anda
     game_board = gameBoardNew();
+    printf("Despues de gameBoardInit\n");//anda
 
     SDL_Event e;
     int game_over = 0;
@@ -570,8 +679,9 @@ int main(int argc, char* args[]) {// sumo game board como parametro porque lo ne
                 gameBoardAddPlant(game_board, cursor.row, cursor.col);
             }
         }
-
+        printf("Antes de gameBoardUpdate\n");//anda
         gameBoardUpdate(game_board);
+        printf("Antes de gameBoardDraw\n");//anda
         gameBoardDraw(game_board);
 
         // TODO: Agregar la lógica para ver si un zombie llegó a la casa y terminó el juego
@@ -594,7 +704,7 @@ int main(int argc, char* args[]) {// sumo game board como parametro porque lo ne
 
         SDL_Delay(16);
     }
-
+    printf("Saliendo del juego\n");
     gameBoardDelete(game_board);
     cerrar();
     char* original = "Hola, Mundo!";
