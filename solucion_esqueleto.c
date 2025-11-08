@@ -94,7 +94,7 @@ char* strConcatenate(char* src1, char* src2){
 
 #define MAX_ARVEJAS 100
 #define PEA_SPEED 5
-#define ZOMBIE_SPAWN_RATE 1
+#define ZOMBIE_SPAWN_RATE 300
 
 
 // ========= ESTRUCTURAS DE DATOS =========
@@ -431,7 +431,6 @@ void borrarZombieNode(GameBoard* board, int row, ZombieNode* target) {
 }
 void gameBoardUpdate(GameBoard* board) {
     if (!board) {
-        printf("gameBoardUpdate: board == NULL\n");
         return;
     }
     // recorrer cada lista de zombies
@@ -697,7 +696,6 @@ int main(int argc, char* args[]) {// sumo game board como parametro porque lo ne
             }
                 znode = next_z;//sigo con el siguiente
         }
-        row->first_zombie = NULL;
         
     
         }
